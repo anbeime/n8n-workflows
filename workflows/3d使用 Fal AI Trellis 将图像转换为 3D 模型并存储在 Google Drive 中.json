@@ -1,0 +1,598 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "61a37c07-6563-4d3e-9787-c3e8966dfdc4",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -500,
+        1220
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/trellis/requests/{{ $('Create 3D Image').item.json.request_id }}/status ",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "697411d4-b9ee-4f7f-b169-0e18242caec7",
+      "name": "Get status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        560,
+        1220
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kGqVqHDLqbobqcq9",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "5d722e38-2f7a-4f0c-aec3-31552e8b2ffa",
+      "name": "Wait 60 sec.",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        380,
+        1220
+      ],
+      "webhookId": "e10e9912-38e7-4e1f-ad7e-52b1e6a65d79",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "id": "f5eeced5-9981-48e6-877b-d5f699f19da8",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -500,
+        1080
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "# Image-to-3D\n\n\nThis workflow allows users to convert a 2D image into a 3D model by integrating multiple AI and web services. The process begins with a user uploading or providing an image URL, which is then sent to a generative AI model capable of interpreting the content and generating a 3D representation in .glb format. The model is then stored and a download link is returned to the user.\n\n![image](https://i.postimg.cc/1Xd20z4R/3d.png)",
+        "height": 520,
+        "width": 740,
+        "color": 3
+      },
+      "id": "6729476a-65b6-4f4f-8dc5-a546479dedd9",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -500,
+        -40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 - GOOGLE SHEET\nCreate a [Google Sheet like this](https://docs.google.com/spreadsheets/d/1C0Et6X3Zwr_6CxeNjhLpDwjAfIGeUvLGFawckKb0utY/edit?usp=sharing).\n\nPlease insert:\n- in the \"IMAGE MODEL\" column the basic image of the model to dress\n\nLeave the \"3D RESULT\" column unfilled. It will be inserted by the system once the image has been created",
+        "height": 200,
+        "width": 740
+      },
+      "id": "4be5d521-5bc4-41d2-84c6-5d1f0056b4fc",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -500,
+        520
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "383d112e-2cc6-4dd4-8985-f09ce0bd1781",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "COMPLETED"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8b94578a-9be7-46a4-919b-91bb43d50e87",
+      "name": "Completed?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        740,
+        1220
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1C0Et6X3Zwr_6CxeNjhLpDwjAfIGeUvLGFawckKb0utY",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C0Et6X3Zwr_6CxeNjhLpDwjAfIGeUvLGFawckKb0utY/edit?usp=drivesdk",
+          "cachedResultName": "Image to 3D"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11ebWJvwwXHgvQld9kxywKQUvIoBw6xMa0g0BuIqHDxE/edit#gid=0",
+          "cachedResultName": "Foglio1"
+        },
+        "columns": {
+          "value": {
+            "row_number": "={{ $('Get new image').item.json.row_number }}",
+            "IMAGE RESULT": "={{ $('Get Url 3D image').item.json.model_mesh.url }}"
+          },
+          "schema": [
+            {
+              "id": "IMAGE MODEL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "IMAGE MODEL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IMAGE PRODUCT",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "IMAGE PRODUCT",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PRODUCT ID",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PRODUCT ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IMAGE RESULT",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "IMAGE RESULT",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "readOnly": true,
+              "required": false,
+              "displayName": "row_number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "row_number"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "39fe7470-3cd9-432e-b818-540cf978de4e",
+      "name": "Update result",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        160,
+        1600
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Paf0BeR4E3ImR5S0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c713d31f-9abd-496a-ac79-e8e2efe60aa0",
+              "name": "image",
+              "type": "string",
+              "value": "={{ $json['IMAGE'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "54e1245f-e43d-49ec-aea2-92c25e13b0f6",
+      "name": "Set data",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -60,
+        1220
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 - MAIN FLOW\nStart the workflow manually or periodically by hooking the \"Schedule Trigger\" node. It is recommended to set it at 5 minute intervals.",
+        "height": 100,
+        "width": 740
+      },
+      "id": "a00df473-b713-4333-91ea-da15aa56f1ed",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -500,
+        940
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 - GET API KEY (YOURAPIKEY)\nCreate an account [here](https://fal.ai/) and obtain API KEY.\nIn the node \"Create Image\" set \"Header Auth\" and set:\n- Name: \"Authorization\"\n- Value: \"Key YOURAPIKEY\"",
+        "height": 140,
+        "width": 740
+      },
+      "id": "2e02ff55-40ff-43d2-bcec-35cfc4b3377a",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -500,
+        760
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Set API Key created in Step 2",
+        "height": 200,
+        "width": 180
+      },
+      "id": "06604726-5a31-41a7-ae74-e0801b24d7c5",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        120,
+        1160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1C0Et6X3Zwr_6CxeNjhLpDwjAfIGeUvLGFawckKb0utY",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C0Et6X3Zwr_6CxeNjhLpDwjAfIGeUvLGFawckKb0utY/edit?usp=drivesdk",
+          "cachedResultName": "Image to 3D"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C0Et6X3Zwr_6CxeNjhLpDwjAfIGeUvLGFawckKb0utY/edit#gid=0",
+          "cachedResultName": "Foglio1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "3D RESULT"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "827baa01-9ce1-4e30-b1e7-8e6e630c068a",
+      "name": "Get new image",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -280,
+        1220
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Paf0BeR4E3ImR5S0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/trellis",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"image_url\": \"{{ $json.image }}\",\n  \"ss_guidance_strength\": 7.5,\n  \"ss_sampling_steps\": 12,\n  \"slat_guidance_strength\": 3,\n  \"slat_sampling_steps\": 12,\n  \"mesh_simplify\": 0.95,\n  \"texture_size\": 1024\n}",
+        "options": {}
+      },
+      "id": "03555152-be5c-4440-89ab-30fd8021a012",
+      "name": "Create 3D Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        160,
+        1220
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kGqVqHDLqbobqcq9",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/trellis/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "f1c032a4-4720-4dde-bf4f-62ccee14eca2",
+      "name": "Get Url 3D image",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -500,
+        1600
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kGqVqHDLqbobqcq9",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.model_mesh.url }}",
+        "options": {}
+      },
+      "id": "bf604603-32fa-42a1-b1a0-74448cf1787b",
+      "name": "Get File 3D image",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -280,
+        1600
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "name": "={{ $now.format('yyyyLLddHHmmss') }}-{{ $('Get Url 3D image').item.json.model_mesh.file_name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aHRwLWyrqfzoVC8HoB-YMrBvQ4tLC-NZ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1aHRwLWyrqfzoVC8HoB-YMrBvQ4tLC-NZ",
+          "cachedResultName": "Fal.run"
+        },
+        "options": {}
+      },
+      "id": "24cdee16-fa35-4ebe-8b2f-49ddcde4c462",
+      "name": "Upload 3D Image",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -60,
+        1600
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "QkRqRquxGMp9Xybm",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Set data": {
+      "main": [
+        [
+          {
+            "node": "Create 3D Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completed?": {
+      "main": [
+        [
+          {
+            "node": "Get Url 3D image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 60 sec.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get status": {
+      "main": [
+        [
+          {
+            "node": "Completed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 60 sec.": {
+      "main": [
+        [
+          {
+            "node": "Get status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get new image": {
+      "main": [
+        [
+          {
+            "node": "Set data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create 3D Image": {
+      "main": [
+        [
+          {
+            "node": "Wait 60 sec.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload 3D Image": {
+      "main": [
+        [
+          {
+            "node": "Update result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Url 3D image": {
+      "main": [
+        [
+          {
+            "node": "Get File 3D image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get File 3D image": {
+      "main": [
+        [
+          {
+            "node": "Upload 3D Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get new image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "241c45fd-d74e-45d1-96e0-eb7d705b2cc5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "636396f02b6571e40d8fe91cba550515c0cdc0e7d314c210e00b02256375a796"
+  },
+  "id": "NQpYr6Nnqw6higXW",
+  "tags": [
+    {
+      "name": "Engineering",
+      "id": "u5XwIG8cl8YYOych",
+      "createdAt": "2025-05-28T06:52:39.056Z",
+      "updatedAt": "2025-05-28T06:52:39.056Z"
+    },
+    {
+      "name": "Building Blocks",
+      "id": "Z0THhtMSXW1WHsmm",
+      "createdAt": "2025-05-28T06:52:39.078Z",
+      "updatedAt": "2025-05-28T06:52:39.078Z"
+    },
+    {
+      "createdAt": "2025-05-25T07:07:45.807Z",
+      "updatedAt": "2025-05-25T07:07:45.807Z",
+      "id": "ekpFCbg6JluiUk7X",
+      "name": "AI"
+    },
+    {
+      "name": "HR",
+      "id": "1NWT03LvtSlfkPjf",
+      "createdAt": "2025-05-28T06:52:39.087Z",
+      "updatedAt": "2025-05-28T06:52:39.087Z"
+    }
+  ]
+}

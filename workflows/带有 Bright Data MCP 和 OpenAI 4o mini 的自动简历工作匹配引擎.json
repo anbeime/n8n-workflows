@@ -1,0 +1,530 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ef351e32-018e-4e0b-bbc9-b7a6de584ace",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        10700,
+        3220
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {},
+      "id": "d516f95e-2bd3-4aa1-9b71-71d6056263bc",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        9220,
+        3220
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "27f91e79-72da-48a4-aacd-209ae81f832b",
+      "name": "List all tools for Bright Data",
+      "type": "n8n-nodes-mcp.mcpClient",
+      "position": [
+        9440,
+        3220
+      ],
+      "typeVersion": 1,
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "214e61a0-3587-453f-baf5-eac013990857",
+              "name": "resume",
+              "type": "string",
+              "value": "I am Pechi, Senior Python Developer with 9+ years of experience."
+            },
+            {
+              "id": "98c64f52-1564-4889-811d-39cac3951cc3",
+              "name": "keywords",
+              "type": "string",
+              "value": "Python"
+            },
+            {
+              "id": "34202143-4b07-4301-b5e9-767430952214",
+              "name": "location",
+              "type": "string",
+              "value": "India"
+            },
+            {
+              "id": "47d01515-302b-4a91-b9db-3af0033a56e1",
+              "name": "job_search_base_url",
+              "type": "string",
+              "value": "https://www.linkedin.com/jobs/search/"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ec0da483-9dfe-4b14-8195-40e076458002",
+      "name": "Set the Input fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        9660,
+        3220
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "db663ac8-ca21-4a39-b694-882e7c304205",
+      "name": "Bright Data MCP Client For Jobs Extraction",
+      "type": "n8n-nodes-mcp.mcpClient",
+      "position": [
+        9880,
+        3220
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1,
+      "credentials": {},
+      "notes": "Scrape a single webpage URL with advanced options for content extraction and get back the results in MarkDown language."
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "id": "9f2bd831-8106-4029-97b5-b1dc6945af8a",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        10480,
+        3220
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "a3c9a0ec-8405-4f0c-901a-0eadec8194f0",
+      "name": "Bright Data MCP Client For Jobs Extraction within a Loop",
+      "type": "n8n-nodes-mcp.mcpClient",
+      "position": [
+        10920,
+        3100
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1,
+      "credentials": {},
+      "notes": "Scrape a single webpage URL with advanced options for content extraction and get back the results in MarkDown language."
+    },
+    {
+      "parameters": {
+        "text": "=Extract the job description in a textual format\n\nHere's the content: {{ $json.result.content[0].text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "job_description",
+              "description": "Job Description"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "746138b7-391b-4ec3-92a4-8915d00a9665",
+      "name": "Job Desc Information Extractor",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "position": [
+        11140,
+        3100
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Hi, you are a helpful job matcher, you analyze the given resume and job description and providing a job matching skills and score in a JSON format.\n\nHere's the Resume:\n{{ $('Set the Input fields').item.json.resume }}\n\nHere's the Job Desc:\n\n{{ $json.output.job_description }}",
+        "hasOutputParser": true
+      },
+      "id": "9d0875e3-bcc4-4f76-9961-ac6aaa255eb2",
+      "name": "AI Job Match",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        11520,
+        3100
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"job_match_analysis\": {\n    \"resume_summary\": \"Senior Python Developer with 9+ years of experience.\",\n    \"job_description_summary\": \"Seeking a developer with expertise in Sagemaker, Python, and LLM. The role involves client interaction, requirements understanding, design review, architecture validation, and team leadership.\",\n    \"skill_match\": [\n      {\n        \"skill\": \"python\",\n        \"resume\": \"Strong match - explicitly mentioned as core skill.\",\n        \"job_description\": \"Strong match - listed as a primary skill.\",\n        \"score\": 100\n      },\n      {\n        \"skill\": \"sagemaker\",\n        \"resume\": \"No match - not mentioned in the resume.\",\n        \"job_description\": \"Strong match - listed as a primary skill.\",\n        \"score\": 0\n      },\n      {\n        \"skill\": \"llm\",\n        \"resume\": \"No match - not mentioned in the resume.\",\n        \"job_description\": \"Strong match - listed as a primary skill.\",\n        \"score\": 0\n      },\n      {\n        \"skill\": \"leadership\",\n        \"resume\": \"Implicit match - Senior role implies leadership experience.\",\n        \"job_description\": \"Explicit match - requires leading and guiding teams.\",\n        \"score\": 75\n      },\n      {\n        \"skill\": \"client_interaction\",\n        \"resume\": \"No explicit mention, inferred from senior role.\",\n        \"job_description\": \"Explicit match - requires interfacing with clients.\",\n        \"score\": 50\n      }\n    ],\n    \"overall_match_score\": 45,\n    \"rationale\": \"The candidate's core skill (Python) is a strong match. The resume implies leadership skills, aligning with the job's team leadership requirements. However, the absence of Sagemaker and LLM experience significantly lowers the overall score. The candidate needs to demonstrate experience in these areas for a higher match.\",\n    \"recommendations\": [\n      \"Highlight any experience (even if limited) with Sagemaker or LLMs in the resume.\",\n      \"Quantify Python experience with specific projects and technologies used.\",\n      \"Emphasize any client-facing experience or responsibilities in previous roles.\",\n      \"Showcase leadership experience with specific examples (e.g., mentoring junior developers, leading project teams).\"\n    ]\n  }\n}\n"
+      },
+      "id": "c7744dd6-0a3c-41e7-9e5c-fd9fd1035424",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        11680,
+        3300
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "functionCode": "items[0].binary = {\n  data: {\n    data: new Buffer(JSON.stringify(items[0].json, null, 2)).toString('base64')\n  }\n};\nreturn items;"
+      },
+      "id": "4382cf95-d9fa-49c3-9955-343c2d290a42",
+      "name": "Create a binary data for AI Job Match",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        11900,
+        3040
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://webhook.site/7b5380a0-0544-48dc-be43-0116cb2d52c2",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "job_match_response",
+              "value": "={{ $json.output.job_match_analysis.toJsonString() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0ad27617-ca2f-4184-b1a3-d3bb3f0c9d35",
+      "name": "Webhook Notification for AI Job Match",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        11900,
+        3320
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "content": "## Disclaimer\nThis template is only available on n8n self-hosted as it's making use of the community node for MCP Client.",
+        "height": 120,
+        "width": 440
+      },
+      "id": "65d3494c-ebe6-4d95-b300-5cbafddc7eb1",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        10600,
+        2780
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## LLM Usages\n\nOpenAI 4o mini LLM is being utilized for the structured data extraction handling.",
+        "height": 220,
+        "width": 440,
+        "color": 5
+      },
+      "id": "8ab6a856-db2d-4777-afc0-c6c40231eb21",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        9660,
+        2960
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Bright Data MCP Job Extract via Job Listings\nExtract job information via BrightData MCP and then perform the AI Job matching by utilizing the OpenAI GPT 4o mini LLM",
+        "height": 620,
+        "width": 1660,
+        "color": 3
+      },
+      "id": "09a9726b-ff58-4a14-aaab-18ab490e9722",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        10600,
+        2940
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Logo\n\n\n![logo](https://images.seeklogo.com/logo-png/43/1/brightdata-logo-png_seeklogo-439974.png)\nNotice  注意\nCommunity nodes can only be installed on self-hosted instances of n8n.\n社区节点只能安装在 n8n 的自托管实例上。\n\nWho this is for\n这是为谁准备的\nThe Automated Resume Job Matching Engine is an intelligent workflow designed for career platforms, HR tech startups, recruiting firms, and AI developers who want to streamline job-resume matching using real-time data from LinkedIn and job boards.\n自动简历工作匹配引擎是一种智能工作流程，专为希望使用来自 LinkedIn 和工作委员会的实时数据简化工作简历匹配的职业平台、人力资源技术初创公司、招聘公司和 AI 开发人员而设计。\n\nThis workflow is tailored for:\n此工作流程专为以下人员量身定制：\n\nHR Tech Founders - Building next-gen recruiting products\nHR Tech 创始人 - 构建下一代招聘产品\n\nRecruiters & Talent Sourcers - Seeking automated candidate-job fit evaluation\n招聘人员和人才来源 - 寻求自动化的候选人-工作匹配度评估\n\nJob Boards & Portals - Enriching user experience with AI-driven job recommendations\n工作板和门户 - 通过 AI 驱动的工作推荐丰富用户体验\n\nCareer Coaches & Resume Writers - Offering personalized job fit analysis\n职业教练和简历作者 - 提供个性化的工作匹配分析\n\nAI Developers - Automating large-scale matching tasks using LinkedIn and job data\nAI 开发人员 - 使用 LinkedIn 和工作数据自动执行大规模匹配任务\n\nWhat problem is this workflow solving?\n此工作流解决了什么问题？\nManually matching a resume to job description is time-consuming, biased, and inefficient. Additionally, accessing live job postings and candidate profiles requires overcoming web scraping limitations.\n手动将简历与职位描述进行匹配既耗时又有偏见且效率低下。此外，访问实时职位发布和候选人资料需要克服网络抓取限制。\n\nThis workflow solves:  此工作流解决了以下问题：\n\nAutomated LinkedIn profile and job post data extraction using Bright Data MCP infrastructure\n使用 Bright Data MCP 基础设施自动提取 LinkedIn 个人资料和职位发布数据\n\nSemantic matching between job requirements and candidate resume using OpenAI 4o mini\n使用 OpenAI 4o mini 在工作要求和候选人简历之间进行语义匹配\n\nPagination handling for high-volume job data\n大容量作业数据的分页处理\n\nEnd-to-end automation from scraping to delivery via webhook and persisting the job matched response to disk\n端到端自动化，从抓取到通过 Webhook 交付，并将作业匹配的响应保存到磁盘\n\nWhat this workflow does\n此工作流程的作用\nBright Data MCP for Job Data Extraction\n用于作业数据提取的 Bright Data MCP\n\nUses Bright Data MCP Clients to extract multiple job listings (supports pagination)\n使用 Bright Data MCP 客户端提取多个职位列表（支持分页）\n\nPulls job data from LinkedIn with the pre-defined filtering criteria's\n使用预定义的筛选条件从 LinkedIn 中提取工作数据\n\nOpenAI 4o mini LLM Matching Engine\nOpenAI 4o mini LLM 匹配引擎\n\nExtracts paginated job data from the Bright Data MCP extracted info via the MCP scrape_as_html tool.\n通过 MCP scrape_as_html 工具从 Bright Data MCP 提取的信息中提取分页作业数据。\n\nExtracts textual job description information via the scraped job information by leveraging the Bright Data MCP scrape_as_html tool.\n利用 Bright Data MCP scrape_as_html 工具，通过抓取的作业信息提取文本职位描述信息。\n\nAI Job Matching node handles the job description and the candidate resume compare to generate match scores with insights\nAI Job Matching 节点处理职位描述和候选人简历比较，以生成具有见解的匹配分数\n\nData Delivery  数据交付\n\nSends final match report to a Webhook Notification endpoint\n将最终匹配报告发送到 Webhook 通知终端节点\n\nPersistence of AI matched job response to disk\nAI 匹配作业响应对磁盘的持久性\n\nPre-conditions  先决条件\nKnowledge of Model Context Protocol (MCP) is highly essential. Please read this blog post - model-context-protocol\n了解模型上下文协议 （MCP） 非常重要。请阅读这篇博文 - model-context-protocol\nYou need to have the Bright Data account and do the necessary setup as mentioned in the Setup section below.\n您需要拥有 Bright Data 帐户并按照下面的 设置 部分所述进行必要的设置。\nYou need to have the Google Gemini API Key. Visit Google AI Studio\n您需要拥有 Google Gemini API 密钥。访问 Google AI Studio\nYou need to install the Bright Data MCP Server @brightdata/mcp\n您需要安装 Bright Data MCP 服务器 @brightdata/mcp\nYou need to install the n8n-nodes-mcp\n您需要安装 n8n-nodes-mcp\nSetup  设置\nPlease make sure to setup n8n locally with MCP Servers by navigating to n8n-nodes-mcp\n请确保通过导航到 n8n-nodes-mcp 使用 MCP 服务器在本地设置 n8n\nPlease make sure to install the Bright Data MCP Server @brightdata/mcp on your local machine.\n请确保在本地计算机上安装 Bright Data MCP 服务器 @brightdata/mcp。\nSign up at Bright Data.\n在 Bright Data 注册。\nNavigate to Proxies & Scraping and create a new Web Unlocker zone by selecting Web Unlocker API under Scraping Solutions.\n导航到代理和抓取，并通过选择抓取解决方案下的 Web 解锁 API 创建一个新的 Web 解锁区域。\nCreate a Web Unlocker proxy zone called mcp_unlocker on Bright Data control panel.\n在 Bright Data 控制面板上创建名为 mcp_unlocker 的 Web Unlocker 代理区域。\nIn n8n, configure the OpenAi account credentials.\n在 n8n 中，配置 OpenAi 账户凭证。\nIn n8n, configure the credentials to connect with MCP Client (STDIO) account with the Bright Data MCP Server as shown below.\n在 n8n 中，配置凭证以使用 Bright Data MCP 服务器与 MCP 客户端 （STDIO） 帐户连接，如下所示。\nMCPClientAccount.png\nMake sure to copy the Bright Data API_TOKEN within the Environments textbox above as API_TOKEN=<your-token>.\n确保复制 明亮数据 API_TOKEN 在上面的 环境 文本框中为 API_TOKEN=<your-token>。\nUpdate the Set input fields for candidate resume, keywords and other filtering criteria's.\n更新 Set input fields for candidate resume， keywords and other filtering criteria's（设置候选人简历、关键字和其他筛选条件的输入字段）。\nUpdate the Webhook HTTP Request node with the Webhook endpoint of your choice.\n使用您选择的 Webhook 终端节点更新 Webhook HTTP Request 节点。\nUpdate the file name and path to persist on disk.\n更新文件名和路径以保留在磁盘上。\nHow to customize this workflow to your needs\n如何根据您的需求自定义此工作流程\nTarget Different Job Boards\n针对不同的工作板\n\nSet input fields with the sites like Indeed, ZipRecruiter, or Monster\n使用 Indeed、ZipRecruiter 或 Monster 等网站设置输入字段\nCustomize Matching Criteria\n自定义匹配条件\n\nAdjust the prompt inside the AI Job Match node\n调整 AI Job Match 节点内的提示\n\nInclude scoring metrics like skills match %, experience relevance, or cultural fit\n包括评分指标，如技能匹配度、体验相关性或文化契合度\n\nAutomate Scheduling  自动调度\n\nUse a Cron Node to periodically check for new jobs matching a profile\n使用 Cron 节点定期检查与配置文件匹配的新作业\n\nSet triggers based on webhook or input form submissions\n根据 Webhook 或输入表单提交设置触发器\n\nOutput Customization  输出自定义\n\nAdd Markdown/PDF formatting for report summaries\n为报表摘要添加 Markdown/PDF 格式\n\nExtend with Google Sheets export for internal analytics\n使用 Google 表格导出进行扩展以进行内部分析\n\nEnhance Data Security  增强数据安全性\n\nMask personal info before sending to external endpoints\n在发送到外部端点之前屏蔽个人信息",
+        "height": 400,
+        "width": 400,
+        "color": 7
+      },
+      "id": "dd44e0e7-3004-4e33-91c3-d7028e7ebd06",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        9220,
+        2400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Note\n\nDeals with the LinkedIn profile data extraction by utilizing the Bright Data MCP and OpenAI GPT 4o LLM.\n\n**Please make sure to set the input fields node with the LinkedIn profile URL with the resume, location, keywords etc.\n\nPlease make sure to update the Webhook Notification URL of your interest**",
+        "height": 320,
+        "width": 400
+      },
+      "id": "8d23dc38-c265-402e-8149-646520db3006",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        9220,
+        2860
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "16a27596-8d1d-4d26-b8ef-8233c3b47edd",
+      "name": "OpenAI Chat Model for Job Desc Extract",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        11240,
+        3320
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "f7ee47f5-3691-4b34-930e-bad98bcbd098",
+      "name": "OpenAI Chat Model for AI Job Match",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        11520,
+        3300
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=d:\\Job-Match-{{$now.toSeconds()}}.json",
+        "options": {}
+      },
+      "id": "204135cc-a2f8-483c-bb06-d2e69847dff9",
+      "name": "Write the AI job matched response to disk",
+      "type": "n8n-nodes-base.readWriteFile",
+      "position": [
+        12120,
+        3040
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "text": "=Extract all the job links from the provided content. \n\nHere's the content:  {{ $json.result.content[0].text }}",
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"array\",\n\t\"properties\": {\n\t\t\"link\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}",
+        "options": {}
+      },
+      "id": "9388dafd-6949-4525-b77a-e2bac4a32c51",
+      "name": "Paginated Job Data Extractor",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "position": [
+        10100,
+        3220
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "ab8a4fae-4c20-4cfa-a88a-3e112af4974c",
+      "name": "OpenAI Chat Model for Paginated Job Extract",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        10200,
+        3440
+      ],
+      "typeVersion": 1.2
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Job Match": {
+      "main": [
+        [
+          {
+            "node": "Create a binary data for AI Job Match",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Webhook Notification for AI Job Match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Job Match",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Paginated Job Data Extractor": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Desc Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "AI Job Match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model for AI Job Match": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Job Match",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a binary data for AI Job Match": {
+      "main": [
+        [
+          {
+            "node": "Write the AI job matched response to disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Notification for AI Job Match": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model for Job Desc Extract": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Job Desc Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model for Paginated Job Extract": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Paginated Job Data Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5d910704-6f19-4847-8fa5-ade6a30f6fae",
+  "meta": {
+    "instanceId": "636396f02b6571e40d8fe91cba550515c0cdc0e7d314c210e00b02256375a796"
+  },
+  "id": "NQpYr6Nnqw6higXW",
+  "tags": [
+    {
+      "name": "Engineering",
+      "id": "u5XwIG8cl8YYOych",
+      "createdAt": "2025-05-28T06:52:39.056Z",
+      "updatedAt": "2025-05-28T06:52:39.056Z"
+    },
+    {
+      "name": "Building Blocks",
+      "id": "Z0THhtMSXW1WHsmm",
+      "createdAt": "2025-05-28T06:52:39.078Z",
+      "updatedAt": "2025-05-28T06:52:39.078Z"
+    },
+    {
+      "createdAt": "2025-05-25T07:07:45.807Z",
+      "updatedAt": "2025-05-25T07:07:45.807Z",
+      "id": "ekpFCbg6JluiUk7X",
+      "name": "AI"
+    },
+    {
+      "name": "HR",
+      "id": "1NWT03LvtSlfkPjf",
+      "createdAt": "2025-05-28T06:52:39.087Z",
+      "updatedAt": "2025-05-28T06:52:39.087Z"
+    }
+  ]
+}

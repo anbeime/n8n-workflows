@@ -1,0 +1,380 @@
+{
+  "name": "自动总结AI新闻并发送到微信",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "触发频率 这里设置为每天早上8点\n",
+        "height": 260,
+        "width": 185,
+        "color": 6
+      },
+      "id": "01d3860e-d6c1-476d-8dea-d29e5f3a5c70",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        8540,
+        1480
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "e9566e05-4f3e-42a6-9ce8-5778caad154a",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        8580,
+        1580
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "从免费的 Gnew API得到AI 新闻",
+        "height": 260,
+        "width": 205,
+        "color": 5
+      },
+      "id": "a0dcdbdc-fd12-42d1-86e0-1e3319a478eb",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        8820,
+        1340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# 自动总结AI新闻并发送到微信",
+        "height": 80,
+        "width": 580
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        9040,
+        1240
+      ],
+      "id": "3e1671b9-185e-49a9-aa7f-7fbe3f60e425",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "LLM考虑所有信息生成telegram的详细报告",
+        "height": 527,
+        "width": 325,
+        "color": 4
+      },
+      "id": "144b9930-3c62-47ee-bbc7-a0192e69b688",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        9600,
+        1480
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c3090c5-8c3d-40af-8a94-a4297f0b4920",
+              "name": "articles",
+              "value": "={{ $json.articles }}",
+              "type": "string"
+            },
+            {
+              "id": "9bcb977f-4813-461c-856e-4a05e5f89c99",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        9080,
+        1440
+      ],
+      "id": "362bf5ff-9e8c-413f-8538-fc68595ee2d2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://gnews.io/api/v4/search?q=ai&lang=en&apikey=c029dbc5279c8dcefaa3c66c3c7ab215",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        8880,
+        1440
+      ],
+      "id": "37356499-d140-4cf8-97bc-42ee3f7d0d9c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "从免费的 Gnew API得到AI 新闻",
+        "height": 260,
+        "width": 205,
+        "color": 5
+      },
+      "id": "79e9dc08-3aad-4e37-8cb1-6bf1301146d4",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        8820,
+        1700
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c3090c5-8c3d-40af-8a94-a4297f0b4920",
+              "name": "articles",
+              "value": "={{ $json.articles }}",
+              "type": "string"
+            },
+            {
+              "id": "9bcb977f-4813-461c-856e-4a05e5f89c99",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        9080,
+        1780
+      ],
+      "id": "cf43e125-fe5a-4144-9722-50882f7efd98",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything?q=ai&language=en&apiKey=6e3caada05554e2ca6fe58ecb8cd1730",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        8880,
+        1780
+      ],
+      "id": "068291f4-dbde-43e8-a410-5a2b677b863f",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        9360,
+        1580
+      ],
+      "id": "e4587f3b-6c37-4c5b-8a10-0f185c6bcbe4",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=你是一个由AI新闻助手。你的任务是\n1. 只提取{{ $json.articles }}中的关于AI技术进展和应用的15条新闻。其他的不要。\n2. 翻译为准确的中文，注意，有些技术词汇如果大家都用英文可以不翻译为中文。\n3. 确保包含每个新闻的url\n4. 确保在输出的第一句提及今天的日期，例如：2025年10月10号的AI新闻\n文章结构：\n标题：包含emoji符号，如🔥🚀\n导语：用「行业速递」+50字事件背景\n正文：3个二级标题（📊数据解读、🤖技术拆解、🌐行业影响）\n结语：添加「本文由AI生成，关注@TOPGO智能-AI123 获取每日报告」\n内容规范：\n每篇严格控制在1000±100字\n每段不超过4行，口语化表达\n在「技术拆解」部分插入代码片段占位符（如：AI模型架构图：[图示位置]）\n排版输出：\n使用公众号编辑器兼容的Markdown语法\n预设样式：正文16px/行距1.75/页边距10px\n在文末添加分割线---+话题标签#AI日报#科技前沿\n交付形式：\n生成可一键复制的排版文本\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        9640,
+        1580
+      ],
+      "id": "f84a3cf0-e117-4fbc-8f70-8c8957beeeb2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-prover-v2:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        9640,
+        1800
+      ],
+      "id": "1099dd15-d8d8-4a42-841c-dd3b49478a0b",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "EtRRTktovOUzc9p9",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://wxpusher.zjiecode.com/api/send/message/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "appToken",
+              "value": "AT_X5lb1I2KWyCM6JuzbU37rlg9NGiZTOm8"
+            },
+            {
+              "name": "uid",
+              "value": "UID_SPC4f6lj6nfEYjsMlp4Dt2yTR4BO"
+            },
+            {
+              "name": "content",
+              "value": "AI资讯\n{{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        10040,
+        1580
+      ],
+      "id": "3efa28be-b7dc-4b74-90db-5c478125f6bf",
+      "name": "HTTP Request2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e0b703bb-a012-4d9a-92c3-6968464d2ee8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "636396f02b6571e40d8fe91cba550515c0cdc0e7d314c210e00b02256375a796"
+  },
+  "id": "c4Yd5yEO4TU1NbvY",
+  "tags": [
+    {
+      "name": "Social Media",
+      "id": "En0gl9kReq1LAYwm",
+      "createdAt": "2025-05-27T13:52:36.050Z",
+      "updatedAt": "2025-05-27T13:52:36.050Z"
+    }
+  ]
+}

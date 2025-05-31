@@ -1,0 +1,512 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e9350716-af00-493b-bb13-0485d6e4041e",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        80,
+        800
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Bright Data Legal Case Research Scraper",
+        "height": 320,
+        "width": 440,
+        "color": 4
+      },
+      "id": "b7f110a9-9bfb-4161-91a3-456196d95af4",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        540,
+        700
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "acc7b3e7-1573-4a93-85c2-d5b7ee422e54",
+      "name": "List all tools for Bright Data",
+      "type": "n8n-nodes-mcp.mcpClient",
+      "position": [
+        300,
+        800
+      ],
+      "typeVersion": 1,
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "functionCode": "items[0].binary = {\n  data: {\n    data: new Buffer(JSON.stringify(items[0].json, null, 2)).toString('base64')\n  }\n};\nreturn items;"
+      },
+      "id": "c66b2eaf-8a33-4607-bb99-9e3a7985d68f",
+      "name": "Create a binary data for LinkedIn company info extract",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        3040,
+        720
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Disclaimer\nThis template is only available on n8n self-hosted as it's making use of the community node for MCP Client.",
+        "height": 120,
+        "width": 440
+      },
+      "id": "7249aaf2-2cfc-4634-8374-956fea0713dc",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1820,
+        480
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "214e61a0-3587-453f-baf5-eac013990857",
+              "name": "url",
+              "type": "string",
+              "value": "https://www.courtlistener.com/?q=IT%20laws%20for%20cyber%20crime&type=o&order_by=dateFiled%20desc&stat_Published=on"
+            },
+            {
+              "id": "45014942-0a2e-4f46-b395-f82f97bfa93e",
+              "name": "webhook_url",
+              "type": "string",
+              "value": "https://webhook.site/7b5380a0-0544-48dc-be43-0116cb2d52c2"
+            },
+            {
+              "id": "bf011e1f-7032-49db-8f25-31ec4c35b9c5",
+              "name": "base_url",
+              "type": "string",
+              "value": "https://www.courtlistener.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f39cb353-ec35-488f-b26c-0e3b3b083945",
+      "name": "Set the Legal Case Research URL",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        580,
+        800
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "35ae0c42-8d0a-41db-9493-db8067cf641e",
+      "name": "Bright Data MCP Client For Legal Case Research",
+      "type": "n8n-nodes-mcp.mcpClient",
+      "position": [
+        800,
+        800
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1,
+      "credentials": {},
+      "notes": "Scrape a single webpage URL with advanced options for content extraction and get back the results in MarkDown language."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract the content in a structured format. Here's the content : {{ $json.result.content[0].text }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are an expert structured data extractor"
+            }
+          ]
+        }
+      },
+      "id": "e9963ea3-3d3d-44d1-a797-3a71e9244206",
+      "name": "Case Extractor",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        1200,
+        800
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[{\n\"Id\": \"\",\n\"Link\" : \"\",\n\"Title\": \n\"United States v. IXCOLGONZALEZ\"\n}]"
+      },
+      "id": "e56988de-3e9f-4a16-9a91-fa5a89f59eff",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        1400,
+        1020
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4bdace9e-820f-46f5-bd9f-098cf4a3b970",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        1920,
+        800
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {},
+      "id": "b9ff06d1-2cd8-4260-9a72-3c8c6c37e7e1",
+      "name": "Bright Data MCP Client For Legal Case Research Within Loop",
+      "type": "n8n-nodes-mcp.mcpClient",
+      "position": [
+        2460,
+        820
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1,
+      "credentials": {},
+      "notes": "Scrape a single webpage URL with advanced options for content extraction and get back the results in MarkDown language."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract html to textual content  {{ $json.result.content[0].text }}"
+      },
+      "id": "9c5bb05b-5992-4021-9ab6-02888637b3c1",
+      "name": "HTML to Textual Data Extract Within Loop",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        2680,
+        820
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Set the Legal Case Research URL').item.json.webhook_url }}",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "case_content",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "49de43d3-b84c-4d75-a567-488319cc9460",
+      "name": "Webhook Notification for HTML to Textual Data Extract Within the Loop",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3040,
+        920
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=d:\\Case-{{ $('Loop Over Items').item.json['Id'] }}.json",
+        "options": {}
+      },
+      "id": "35352d1f-cad0-4c37-8037-9a5bdaa93100",
+      "name": "Write the case content to disk",
+      "type": "n8n-nodes-base.readWriteFile",
+      "position": [
+        3300,
+        720
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "jsCode": "\nreturn $input.first().json.output"
+      },
+      "id": "370b9bda-a08e-4215-8eaa-03f86fa18b17",
+      "name": "Code to output the collection of cases",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1580,
+        800
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "content": "## Bright Data Legal Case Research Scraper\n\nLoop through and perform the data extraction using MCP and LLMs",
+        "height": 520,
+        "width": 1660,
+        "color": 5
+      },
+      "id": "3e82c8ac-e75e-4cd7-ab1b-8a5141f6fdd7",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1820,
+        660
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## LLM Usages\n\nOpenAI 4o mini LLM is being utilized for the structured data extraction handling.",
+        "height": 220,
+        "width": 440,
+        "color": 5
+      },
+      "id": "74888fcf-165d-4c05-a61e-0d44ad85dd96",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        540,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Logo\n\n\n![logo](https://images.seeklogo.com/logo-png/43/1/brightdata-logo-png_seeklogo-439974.png)\n",
+        "height": 400,
+        "width": 400,
+        "color": 7
+      },
+      "id": "5a0e8c67-25ab-4348-9d72-f2c7e7ee81ef",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        580,
+        -280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Who this is for\n这是为谁准备的\nThe Legal Case Research Extractor is a powerful automated workflow designed for legal tech teams, researchers, law firms, and data scientists focused on transforming unstructured legal case data into actionable, structured insights.\nLegal Case Research Extractor 是一个强大的自动化工作流程，专为法律技术团队、研究人员、律师事务所和数据科学家设计，专注于将非结构化法律案例数据转化为可作的结构化见解。\n\nThis workflow is tailored for:\n此工作流程专为以下人员量身定制：\n\nLegal Researchers automating case law data mining\nLegal Researchers 自动挖掘判例法数据\n\nLitigation Support Teams handling large volumes of case records\n处理大量案件记录的诉讼支持团队\n\nLawTech Startups building AI-powered legal research assistants\nLawTech Startups 构建 AI 驱动的法律研究助理\n\nCompliance Analysts extracting case-specific insights\n合规分析师提取特定于案例的见解\n\nAI Developers working on legal NLP, summarization, and search engines\n从事合法 NLP、摘要和搜索引擎工作的 AI 开发人员\n\nWhat problem is this workflow solving?\n此工作流解决了什么问题？\nLegal case data is often locked in semi-structured or raw HTML formats, scattered across jurisdiction-specific websites. Manually extracting and processing this data is tedious and inefficient.\n法律案例数据通常以半结构化或原始 HTML 格式锁定，分散在特定司法管辖区的网站上。手动提取和处理这些数据既繁琐又效率低下。\n\nThis workflow automates:\n此工作流程可自动执行：\n\nExtraction of legal case data via Bright Data's powerful MCP infrastructure\n通过 Bright Data 强大的 MCP 基础设施提取法律案例数据\n\nParsing of HTML into clean, readable text using Google Gemini LLM\n使用 Google Gemini LLM 将 HTML 解析为干净、可读的文本\n\nStructuring and delivering the output through webhook and file storage\n通过 Webhook 和文件存储构建和交付输出\n\nWhat this workflow does\n此工作流程的作用\nInput  输入\n\nSet the Legal Case Research URL node is responsible for setting the legal case URL for the data extraction.\n设置 Legal Case Research URL 节点负责设置数据提取的法律案例 URL。\nBright Data MCP Data Extractor\nBright Data MCP 数据提取器\n\nBright Data MCP Client For Legal Case Research node is responsible for the legal case extraction via the Bright Data MCP tool - scrape_as_html\nBright Data MCP Client For Legal Case Research 节点负责通过 Bright Data MCP 工具 - scrape_as_html 提取法律案例\nCase Extractor  案例提取器\n\nGoogle Gemini based Case Extractor is responsible for producing a paginated list of cases\n基于 Google Gemini 的 Case Extractor 负责生成分页的案例列表\nLoop through Legal Case URLs\n遍历法律案例 URL\n\nReceives a collection of legal case links to process\n接收要处理的法律案例链接的集合\n\nEach URL represents a different case from a target legal website\n每个 URL 代表与目标合法网站不同的大小写\n\nBright Data MCP Scraping  Bright Data MCP 抓取\n\nUtilizes Bright Data’s scrape_as_html MCP mode\n利用 Bright Data 的 scrape_as_html MCP 模式\n\nRetrieves raw HTML content of each legal case\n检索每个法律案例的原始 HTML 内容\n\nGoogle Gemini LLM Extraction\nGoogle Gemini LLM 提取\n\nTransforms raw HTML into clean, structured text\n将原始 HTML 转换为干净的结构化文本\n\nPerforms additional information extraction if required (e.g., case summary, court, jurisdiction etc.)\n如果需要，执行其他信息提取（例如，案例摘要、法院、管辖权等）\n\nWebhook Notification  Webhook 通知\n\nSends extracted legal case content to a configurable webhook URL\n将提取的法律案例内容发送到可配置的 Webhook URL\n\nEnables downstream processing or storage in legal databases\n支持在合法数据库中进行下游处理或存储\n\nBinary Conversion & File Persistence\n二进制转换和文件持久性\n\nConverts the structured text to binary format\n将结构化文本转换为二进制格式\n\nSaves the final response to disk for archival or further processing\n将最终响应保存到磁盘以供存档或进一步处理\n\nPre-conditions  先决条件\nKnowledge of Model Context Protocol (MCP) is highly essential. Please read this blog post - model-context-protocol\n了解模型上下文协议 （MCP） 非常重要。请阅读这篇博文 - model-context-protocol\nYou need to have the Bright Data account and do the necessary setup as mentioned in the Setup section below.\n您需要拥有 Bright Data 帐户并按照下面的 设置 部分所述进行必要的设置。\nYou need to have the Google Gemini API Key. Visit Google AI Studio\n您需要拥有 Google Gemini API 密钥。访问 Google AI Studio\nYou need to install the Bright Data MCP Server @brightdata/mcp\n您需要安装 Bright Data MCP 服务器 @brightdata/mcp\nYou need to install the n8n-nodes-mcp\n您需要安装 n8n-nodes-mcp\nSetup  设置\nPlease make sure to setup n8n locally with MCP Servers by navigating to n8n-nodes-mcp\n请确保通过导航到 n8n-nodes-mcp 使用 MCP 服务器在本地设置 n8n\nPlease make sure to install the Bright Data MCP Server @brightdata/mcp on your local machine.\n请确保在本地计算机上安装 Bright Data MCP 服务器 @brightdata/mcp。\nSign up at Bright Data.\n在 Bright Data 注册。\nCreate a Web Unlocker proxy zone called mcp_unlocker on Bright Data control panel.\n在 Bright Data 控制面板上创建名为 mcp_unlocker 的 Web Unlocker 代理区域。\nNavigate to Proxies & Scraping and create a new Web Unlocker zone by selecting Web Unlocker API under Scraping Solutions.\n导航到代理和抓取，并通过选择抓取解决方案下的 Web 解锁 API 创建一个新的 Web 解锁区域。\nIn n8n, configure the Google Gemini(PaLM) Api account with the Google Gemini API key (or access through Vertex AI or proxy).\n在 n8n 中，使用 Google Gemini API 密钥配置 Google Gemini（PaLM） Api 帐户（或通过 Vertex AI 或代理访问）。\nIn n8n, configure the credentials to connect with MCP Client (STDIO) account with the Bright Data MCP Server as shown below.\n在 n8n 中，配置凭证以使用 Bright Data MCP 服务器与 MCP 客户端 （STDIO） 帐户连接，如下所示。\nMCPClientAccount.png\n\nMake sure to copy the Bright Data API_TOKEN within the Environments textbox above as API_TOKEN=<your-token>\n确保将上面 环境 文本框中的 Bright Data API_TOKEN 复制为 API_TOKEN=<your-token>\n\nHow to customize this workflow to your needs\n如何根据您的需求自定义此工作流程\nTarget New Legal Portals  以新的法律门户为目标\n\nModify the legal case input URLs to scrape from different state or federal case databases\n修改法律案件输入 URL 以从不同的州或联邦案件数据库中抓取\nCustomize LLM Extraction  自定义 LLM 提取\n\nModify the prompt to extract specific fields: case number, plaintiff, case summary, outcome, legal precedents etc.\n修改提示以提取特定字段：案件编号、原告、案件摘要、结果、法律先例等。\n\nAdd a summarization step if needed\n根据需要添加摘要步骤\n\nEnhance Loop Handling  增强循环处理\n\nIntegrate with a Google Sheet or API to dynamically fetch case URLs\n与 Google Sheet 或 API 集成以动态获取案例 URL\n\nAdd error handling logic to skip failed cases and log them\n添加了错误处理逻辑以跳过失败的情况并记录它们\n\nImprove Security & Compliance\n提高安全性和合规性\n\nRedact sensitive information before sending via webhook\n在通过 Webhook 发送之前编辑敏感信息\n\nStore processed case data in encrypted cloud storage\n将处理后的案例数据存储在加密的云存储中\n\nOutput Formats  输出格式\n\nSave as PDF, JSON, or Markdown\n另存为 PDF、JSON 或 Markdown\n\nEnable output to cloud storage (S3, Google Drive) or legal document management systems\n允许输出到云存储（S3、Google Drive）或法律文档管理系统",
+        "height": 1220,
+        "width": 680
+      },
+      "id": "8f5a94a3-93da-4578-8c29-1c8735721357",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -260,
+        -460
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "c5da0c5d-8a5f-4222-99e1-b52ea017f1bb",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        2180,
+        820
+      ],
+      "webhookId": "65c9fcd3-2c82-4bdd-80b6-271d65b7f61a",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        1060
+      ],
+      "id": "3255ab7a-e5cd-4270-9a0f-788a699fb8b5",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "EtRRTktovOUzc9p9",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        1040
+      ],
+      "id": "3c3057f6-2b49-42c9-b01d-4fb0c58ba1f3",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "EtRRTktovOUzc9p9",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Case Extractor": {
+      "main": [
+        [
+          {
+            "node": "Code to output the collection of cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Case Extractor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code to output the collection of cases": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML to Textual Data Extract Within Loop": {
+      "main": [
+        [
+          {
+            "node": "Create a binary data for LinkedIn company info extract",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Webhook Notification for HTML to Textual Data Extract Within the Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a binary data for LinkedIn company info extract": {
+      "main": [
+        [
+          {
+            "node": "Write the case content to disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Notification for HTML to Textual Data Extract Within the Loop": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Case Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "HTML to Textual Data Extract Within Loop",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "241c45fd-d74e-45d1-96e0-eb7d705b2cc5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "636396f02b6571e40d8fe91cba550515c0cdc0e7d314c210e00b02256375a796"
+  },
+  "id": "NQpYr6Nnqw6higXW",
+  "tags": [
+    {
+      "name": "Engineering",
+      "id": "u5XwIG8cl8YYOych",
+      "createdAt": "2025-05-28T06:52:39.056Z",
+      "updatedAt": "2025-05-28T06:52:39.056Z"
+    },
+    {
+      "name": "Building Blocks",
+      "id": "Z0THhtMSXW1WHsmm",
+      "createdAt": "2025-05-28T06:52:39.078Z",
+      "updatedAt": "2025-05-28T06:52:39.078Z"
+    },
+    {
+      "createdAt": "2025-05-25T07:07:45.807Z",
+      "updatedAt": "2025-05-25T07:07:45.807Z",
+      "id": "ekpFCbg6JluiUk7X",
+      "name": "AI"
+    },
+    {
+      "name": "HR",
+      "id": "1NWT03LvtSlfkPjf",
+      "createdAt": "2025-05-28T06:52:39.087Z",
+      "updatedAt": "2025-05-28T06:52:39.087Z"
+    }
+  ]
+}

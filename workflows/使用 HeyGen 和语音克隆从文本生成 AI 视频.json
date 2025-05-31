@@ -1,0 +1,311 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9a5dd231-4fb5-4b6f-bfb7-644e8f352d28",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        9520,
+        1380
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "7dc010de-c7ee-4bad-9035-a2ab2448399e",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        10320,
+        1380
+      ],
+      "webhookId": "1c3e61f9-9bd3-489b-a0a1-e20c1f52d496",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53226f92-5381-4f9f-9be5-4b25f31db99c",
+              "name": "data.video_url",
+              "type": "string",
+              "value": "={{ $json.data.video_url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ce361345-c208-4d6d-acea-5ec37676b0df",
+      "name": "Output",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        10940,
+        1400
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## Check video status",
+        "height": 340,
+        "width": 660,
+        "color": 7
+      },
+      "id": "c1569874-4f8f-49a4-aadc-315b8f0834af",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        10240,
+        1280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "2643b070-cbb2-4562-9269-a61389e0c242",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "completed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "40adeb3a-3736-4efb-bf8e-4ac0b620e02d",
+      "name": "is Completed",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        10720,
+        1380
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "content": "# Generate AI Videos with HeyGen in n8n\n\nThis workflow allows you to generate AI-powered videos using [HeyGen](https://www.heygen.com), a platform that provides customizable AI avatars and voices. By integrating HeyGen with n8n, you can create videos by providing a text input, which is then spoken by an AI-generated avatar.\n\n# [👉🏻 Try HeyGen for free 👈🏻](https://www.heygen.com)\n\n## Setup\n\n### Step 1: Create a HeyGen Account & API Key\n1. Sign up for a [HeyGen account](https://www.heygen.com).\n2. Navigate to your account settings and locate your **API Key**.\n3. Copy your API key for use in n8n.\n\n\n⚠️ To use Heygen API you need to purchase API credits\n\n### Step 2: Create n8n Credentials\n1. In n8n, create new credentials and select **\"Custom Auth\"** as the authentication type.\n2. In the Name provide : `X-Api-Key`\n3. And in the value paste your API key from Heygen\n4. Update the 2 http node with the right credentials.\n\n### Step 3: Choose an Avatar and a Voice\nHeyGen provides multiple AI avatars and voice options. You need to choose:\n- An **Avatar ID** (representing the AI-generated presenter)\n- A **Voice ID** (which will read your text)\n\nTo find available avatars and voices:\n1. Visit the HeyGen [API Documentation](https://www.heygen.com/api) or check the list in your HeyGen account.\n2. Copy the **Avatar ID** and **Voice ID** that you want to use.\n🎥 AI Video Generator with HeyGen\n🎥 使用 HeyGen 的 AI 视频生成器\n🚀 Create AI-Powered Videos in n8n with HeyGen\n🚀 使用 HeyGen 在 n8n 中创建 AI 驱动的视频\nThis workflow enables you to generate realistic AI videos using HeyGen, an advanced AI platform for video automation. Simply input your text, choose an AI avatar and voice, and let HeyGen generate a high-quality video for you – all within n8n!\n此工作流程使您能够使用 HeyGen 生成逼真的 AI 视频 ，HeyGen 是一个用于视频自动化的高级 AI 平台。只需输入您的文本 ，选择 AI 头像和语音 ，然后让 HeyGen 为您生成高质量的视频——所有这些都在 n8n 中！\n\n✅ Ideal for:  ✅ 适用于：\n\nContent creators & marketers 🏆\n内容创作者和营销人员 🏆\nAutomating personalized video messages 📩\n自动化个性化视频消息 📩\nAI-powered video tutorials & training materials 🎓\nAI 驱动的视频教程和培训材料 🎓\n🔧 How It Works\n🔧 如何运作\n1️⃣ Provide a text script – This will be spoken in the AI-generated video.\n1️⃣ 提供文本脚本 – 这将在 AI 生成的视频中说出。\n2️⃣ Select an Avatar & Voice – Choose from a variety of AI-generated avatars and voices.\n2️⃣ 选择头像和语音 - 从各种 AI 生成的头像和语音中进行选择。\n3️⃣ Run the workflow – HeyGen processes your request and generates a video.\n3️⃣ 运行工作流程 – HeyGen 处理您的请求并生成视频。\n4️⃣ Download your video – Get the direct link to your AI-powered video!\n4️⃣ 下载您的视频 – 获取您的 AI 驱动视频的直接链接！\n\n⚡ Setup Instructions  ⚡ 设置说明\n1️⃣ Get Your HeyGen API Key\n1️⃣ 获取您的 HeyGen API 密钥\nSign up for a HeyGen account.\n注册一个 HeyGen 帐户 。\nGo to your account settings and retrieve your API Key.\n转到您的账户设置并检索您的 API 密钥 。\n2️⃣ Configure n8n Credentials\n2️⃣ 配置 n8n 凭据\nIn n8n, create new credentials and select \"Custom Auth\" as the authentication type.\n在 n8n 中，创建新凭证并选择 “自定义身份验证” 作为身份验证类型。\nIn the Name provide : X-Api-Key\n在 Name 中提供 ： X-Api-Key\nAnd in the value paste your API key from Heygen\n在值中，粘贴来自 Heygen 的 API 密钥\nUpdate the 2 http node with the right credentials.\n使用正确的凭证更新 2 http 节点。\n3️⃣ Select an AI Avatar & Voice\n3️⃣ 选择一个 AI 头像和语音\nBrowse available avatars & voices in your HeyGen account.\n在您的 HeyGen 账户中浏览可用的头像和声音。\nCopy the Avatar ID and Voice ID for your video.\n复制视频的 Avatar ID 和 Voice ID。\n4️⃣ Run the Workflow\n4️⃣ 运行工作流\nEnter your text, avatar ID, and voice ID.\n输入您的文本、头像 ID 和语音 ID。\nExecute the workflow – your video will be generated automatically!\n执行工作流程 - 您的视频将自动生成！\n🎯 Why Use This Workflow?\n🎯 为什么使用此工作流程？\n✔️ Fully Automated – No manual editing required!\n✔️ 完全自动化 – 无需手动编辑！\n✔️ Realistic AI Avatars – Choose from a variety of digital avatars.\n✔️ 逼真的 AI 头像 – 从各种数字化身中进行选择。\n✔️ Seamless Integration – Works directly within your n8n workflow.\n✔️ 无缝集成 – 直接在您的 n8n 工作流程中工作。\n✔️ Scalable & Fast – Generate multiple videos in minutes.\n✔️ 可扩展且快速 – 在几分钟内生成多个视频。\n\n🔗 Start automating AI-powered video creation today with n8n & HeyGen!\n🔗 今天就开始使用 n8n 和 HeyGen 自动化 AI 驱动的视频创作吧！\n",
+        "height": 860,
+        "width": 820
+      },
+      "id": "92717232-a368-4d3e-8f74-3b1d895f58db",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        8600,
+        1280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# ☝️ Provide Video Details\n\n   - **Avatar ID** \n   - **Voice ID** \n   - **Text**",
+        "height": 180,
+        "width": 440
+      },
+      "id": "10ab9267-a261-40ad-afea-35c0b633e692",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        9780,
+        1640
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.heygen.com/v2/video/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"avatar\",\n        \"avatar_id\": \"{{ $json.avatar_id }}\",\n        \"avatar_style\": \"normal\"\n      },\n      \"voice\": {\n        \"type\": \"text\",\n        \"input_text\": \"{{ $json.text }}\",\n        \"voice_id\": \"{{ $json.voice_id }}\",\n        \"speed\": 1\n      }\n    }\n  ],\n  \"caption\": true,\n  \"dimension\": {\n    \"width\": 1080,\n    \"height\": 1920\n  }\n}",
+        "options": {}
+      },
+      "id": "acfa91a4-528f-48b9-b2f1-062f8fe101d7",
+      "name": "Create Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        10000,
+        1440
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kGqVqHDLqbobqcq9",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dc091aca-844f-404f-ad0c-8ad4b48a505b",
+              "name": "avatar_id",
+              "type": "string",
+              "value": "7895d2d9f4f9453899e1d80e5accb6be"
+            },
+            {
+              "id": "eb2ed34c-53d2-41e8-ab2f-1b8278bde235",
+              "name": "voice_id",
+              "type": "string",
+              "value": "PBgwoAVFZIC0UB6sU914"
+            },
+            {
+              "id": "2c939d6c-73f8-482d-b11f-71bdd7baf04e",
+              "name": "text",
+              "type": "string",
+              "value": "Imagine ADHD as that super energetic friend who jumps from one cool idea to the next. Now, add AI—the smart helper trying to keep things on track. Sometimes, they work together perfectly, and other times, things get a little goofy. One minute you're starting a project, and the next, you're off chasing a shiny new idea! But that's the fun of it. With a bit of AI magic, even the craziest thoughts find their place. Embrace the chaos, laugh at the mix-ups, and let your creativity shine!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1e21da75-db2b-4ede-9ac7-4d8f94fa29a4",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        9760,
+        1460
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "https://api.heygen.com/v1/video_status.get",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "video_id",
+              "value": "={{ $('Create Video').first().json.data.video_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "37afb5fc-dfca-4f5f-84b9-453ff4d12aeb",
+      "name": "Get Video Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        10520,
+        1380
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kGqVqHDLqbobqcq9",
+          "name": "Header Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Video Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Create Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is Completed": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Status": {
+      "main": [
+        [
+          {
+            "node": "is Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a498dc61-3496-45ee-acbd-c42849bba2d8",
+  "meta": {
+    "instanceId": "636396f02b6571e40d8fe91cba550515c0cdc0e7d314c210e00b02256375a796"
+  },
+  "id": "jPWe2wR4zaCUzgeV",
+  "tags": []
+}

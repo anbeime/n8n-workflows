@@ -1,0 +1,317 @@
+{
+  "name": "Error Workflow with Feishu",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "lqshow@gmail.com",
+        "subject": "=Workflow {{ $json.workflow.name }} Failed!",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Workflow Error Notification</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            background-color: #f4f4f4;\n            color: #333;\n            margin: 0;\n            padding: 0;\n        }\n\n        .container {\n            max-width: 600px;\n            margin: 20px auto;\n            background-color: #ffffff;\n            border-radius: 8px;\n            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n            overflow: hidden;\n            border: 1px solid #ddd;\n        }\n\n        .header {\n            background-color: #d32f2f;\n            color: white;\n            text-align: center;\n            padding: 10px 20px;\n            font-size: 20px;\n        }\n\n        .content {\n            padding: 20px;\n            line-height: 1.6;\n        }\n\n        .label {\n            font-weight: bold;\n            color: #555;\n        }\n\n        .important {\n            color: #d32f2f;\n            font-weight: bold;\n        }\n\n        .section-title {\n            color: #d32f2f;\n            border-bottom: 1px solid #ddd;\n            padding-bottom: 5px;\n        }\n\n        .code-block {\n            background-color: #f9f9f9;\n            border-left: 4px solid #d32f2f;\n            padding: 10px;\n            font-family: 'Courier New', monospace;\n            color: #333;\n            white-space: pre-wrap;\n            word-wrap: break-word;\n            margin-top: 10px;\n        }\n\n        .footer {\n            background-color: #eaeaea;\n            text-align: center;\n            padding: 10px;\n            font-size: 12px;\n            color: #777;\n        }\n    </style>\n</head>\n\n<body>\n    <div class=\"container\">\n        <div class=\"header\">\n            Workflow Error Notification\n        </div>\n        <div class=\"content\">\n            <p><span class=\"label\">Workflow:</span> <span class=\"important\">{{ $json.workflow.name }}</span></p>\n            <p><span class=\"label\">Date & Time:</span> {{ $now }}</p>\n            <p><span class=\"label\">Last Node Executed:</span> {{ $json.execution.lastNodeExecuted }}</p>\n\n            <h3 class=\"section-title\">Error Details</h3>\n            <div class=\"code-block\">\n                {{ $json.execution.error.message }}\n            </div>\n\n            <h3 class=\"section-title\">Error Stack</h3>\n            <div class=\"code-block\">\n                {{ $json.execution.error.stack }}\n            </div>\n        </div>\n        <div class=\"footer\">\n            This is an automated message from your workflow monitoring system. Please do not reply.\n        </div>\n    </div>\n</body>\n\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        40
+      ],
+      "id": "023e6025-b329-4de2-80c1-edb0c332dbfb",
+      "name": "Gmail",
+      "webhookId": "979e96f8-4177-40ef-a0e3-d43ad4c55c8b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "RCZyM7NtLqiGwnHw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 错误处理工作流：三重保障通知体系\n\n1. Email\n2. 多维表格\n3. 飞书群组\n\n",
+        "height": 840,
+        "width": 890,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        460,
+        0
+      ],
+      "id": "731af608-8688-4fbf-aad3-0a513b4c4d28",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        500,
+        180
+      ],
+      "id": "7d02a816-7538-45ff-b749-f020b20f1eea",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## 📋 快速选择指南\n\n**根据你的实际需求选择合适的通知方式：**\n\n- **需要即时响应？** → 选择飞书群组通知\n  - 优势：实时性强，团队协作方便\n  - 适合：紧急错误、需要团队讨论的问题\n\n- **需要正式记录存档？** → 选择Email通知  \n  - 优势：正式、可追溯、支持附件\n  - 适合：重要系统错误、需要向管理层汇报的问题\n\n- **需要长期统计分析？** → 选择飞书多维表格记录\n  - 优势：结构化存储、便于分析、支持筛选统计\n  - 适合：错误趋势分析、系统优化决策支撑\n\n\n### 🔄 三种通知方式的组合策略\n\n**最佳实践：**\n1. **Email** - 作为基础通知，确保有正式记录\n2. **多维表格** - 作为数据统计，便于后续分析优化  \n3. **飞书群组** - 作为即时通知，促进团队快速响应\n\n这样的三重机制既保证了问题的及时发现，又为长期的系统优化提供了数据支撑。\n\n",
+        "height": 840,
+        "width": 450
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2fd67588-3d23-4ef9-a187-adb9a38855f8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "resource": "bitable",
+        "operation": "bitable:table:record:add",
+        "app_toke": "MPA1bOjK0aVUcnsSWg8cmCrCnve",
+        "table_id": "tblPJEMuO7zMJVOA",
+        "body": "={\n  \"fields\":{\n    \"Workflow\": \"{{ $json.workflow.name }}\",\n    \"URL\": \"{{ $json.execution.url }}\",\n    \"Timestamp\": \"{{ $now.format('yyyy-MM-dd HH:mm:ssa')  }}\",\n    \"Node\": \"{{ $json.execution.error.node.name  }}\",\n    \"Error Message\":\"{{ $json.execution.error.message }}\",\n    \"Execution ID\": \"{{ $json.execution.id }}\"\n  }\n} "
+      },
+      "type": "n8n-nodes-feishu-lite.feishuNode",
+      "typeVersion": 1,
+      "position": [
+        780,
+        260
+      ],
+      "id": "e9f98111-7929-4435-a567-001e31ff0b54",
+      "name": "Feishu 社区节点",
+      "credentials": {
+        "feishuCredentialsApi": {
+          "id": "1E9XlguKsscZq4YU",
+          "name": "Feishu n8nLark Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "app_id",
+              "value": "XXX"
+            },
+            {
+              "name": "app_secret",
+              "value": "XXX"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        480
+      ],
+      "id": "e45819ba-a6ad-4f01-b229-51dcf781e29d",
+      "name": "Get Feishu Token"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.feishu.cn/open-apis/bitable/v1/apps/MPA1bOjK0aVUcnsSWg8cmCrCnve/tables/tblPJEMuO7zMJVOA/records",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.tenant_access_token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"fields\":{\n    \"Workflow\": \"{{ $('Error Trigger').item.json.workflow.name }}\",\n    \"URL\": \"{{ $('Error Trigger').item.json.execution.url }}\",\n    \"Timestamp\": \"{{ $now.format('yyyy-MM-dd HH:mm:ssa')  }}\",\n    \"Node\": \"{{  $('Error Trigger').item.json.execution.error.node.name  }}\",\n    \"Error Message\":\"{{  $('Error Trigger').item.json.execution.error.message }}\",\n    \"Execution ID\": \"{{  $('Error Trigger').item.json.execution.id }}\"\n  }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        480
+      ],
+      "id": "62bdfe8b-be53-4cb0-9f8d-659a39e5b36f",
+      "name": "Create Error Record"
+    },
+    {
+      "parameters": {
+        "type": "markdown",
+        "content": "=## 错误处理工作流通知\n\n{{ $json.message }}"
+      },
+      "type": "n8n-nodes-lark-webhook.larkWebhook",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        680
+      ],
+      "id": "5d1c73b4-f236-463a-ba56-e69c3c54c991",
+      "name": "Lark 群组",
+      "credentials": {
+        "larkWebhookApi": {
+          "id": "ZquAJFWB6sCs4SBG",
+          "name": "Feishu bot link"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6278f340-6287-4e89-b774-f6c584954d5b",
+              "name": "line_uid",
+              "type": "string",
+              "value": "Uee67d82636f96a3c2d3d42a13f33aef2"
+            },
+            {
+              "id": "9f85ac53-9907-448d-afa4-c54b41ddf868",
+              "name": "message",
+              "value": "=### 工作流程错误-{{ $('Error Trigger').item.json.workflow.name }}\n\n- {{ $('Error Trigger').item.json.execution.error.node.name }}\n- **发生错误时间**：{{ $now.format('yyyy-MM-dd hh:mma') }}。\n- **错误信息**：{{ $('Error Trigger').item.json.execution.error.message }}\n- **执行记录**：{{ $('Error Trigger').item.json.execution.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2460f6e1-5647-4eff-a7d6-b1c99c0b68a9",
+      "name": "组装信息",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        780,
+        680
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## HTTP Request 实现错误日志统计",
+        "height": 220,
+        "width": 500,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        740,
+        440
+      ],
+      "id": "81fc8cc2-f9c4-4967-8990-08b446b4cc46",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 社区节点实现错误日志统计",
+        "height": 220,
+        "width": 500,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        740,
+        200
+      ],
+      "id": "dd4bc261-cd75-4541-a6be-18f48b1bdda5",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Feishu 社区节点",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Feishu Token",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "组装信息",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feishu 社区节点": {
+      "main": [
+        []
+      ]
+    },
+    "Get Feishu Token": {
+      "main": [
+        [
+          {
+            "node": "Create Error Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "组装信息": {
+      "main": [
+        [
+          {
+            "node": "Lark 群组",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6e07ce12-163f-4da8-ac79-00dff6bed327",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a9b2c10be1b50635d65b4f4a2eca172a27a56badf785d692b76a8310bda507d7"
+  },
+  "id": "7gVx4QmrqC8f6FeL",
+  "tags": [
+    {
+      "createdAt": "2025-05-19T08:58:40.137Z",
+      "updatedAt": "2025-05-19T08:58:40.137Z",
+      "id": "6df25QlcQnJz0Hat",
+      "name": "feishu"
+    }
+  ]
+}
