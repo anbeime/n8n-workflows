@@ -1,0 +1,649 @@
+{
+  "name": "Automated LinkedIn Job Hunter_READY",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Automated LinkedIn Job Hunter: Get Your Best Daily Job Matches by Email\n**Author**: Tianyi\n**Email Address**: tianyi.datascience@gmail.com\n\n**Description**: \nThis n8n workflow is designed to automate the process of finding and delivering best-matched job recommendations. It retrieves a resume, scrapes job listings from LinkedIn, uses an AI (Google Gemini) to match jobs to the resume, and then emails the top job recommendations to the user. It's set to run on a schedule.",
+        "height": 260,
+        "width": 640,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        -240
+      ],
+      "id": "552c3242-41c5-4c10-b47c-8ae9056aa5c8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1040,
+        240
+      ],
+      "id": "1598d426-c2b0-4234-88e9-1e7d4a4ca1d6",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a08ebfd2-be88-4870-9f83-9430eda33d56",
+              "name": "Resume",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        240
+      ],
+      "id": "b76e5f4c-4580-4610-ab17-a2fd5c491480",
+      "name": "SetResumeField"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ba8a38a-17fc-4b4a-8a4e-6981b92cbee4",
+              "name": "ApifyAPIKey",
+              "value": "[Your Apify API Key]",
+              "type": "string"
+            },
+            {
+              "id": "a08ebfd2-be88-4870-9f83-9430eda33d56",
+              "name": "Preference",
+              "value": "=prefer startups",
+              "type": "string"
+            },
+            {
+              "id": "82b79f4d-43b9-4a36-80df-0d4ca51ab5e5",
+              "name": "EmailAddressToReceiveJobRecommendations",
+              "value": "[A Email Address]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -740,
+        240
+      ],
+      "id": "38b207b4-d050-47fe-8474-474aa8785627",
+      "name": "Input"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"Company Name\": \"Innovatech Solutions\",\n    \"Job Title\": \"Senior Software Engineer\",\n    \"Industry\": \"Technology / SaaS\",\n    \"Reason for Match\": \"Strong alignment with your 7 years of backend development experience (Java/Spring) listed in CV and your preference for mid-sized tech companies.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/1234567890\"\n  },\n  {\n    \"Company Name\": \"FinSecure Corp\",\n    \"Job Title\": \"Data Scientist\",\n    \"Industry\": \"Financial Services\",\n    \"Reason for Match\": \"Matches your PhD in Statistics, experience with machine learning models detailed in your CV, and stated interest in the Fintech sector.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/0987654321\"\n  },\n  {\n    \"Company Name\": \"FinSecure Corp\",\n    \"Job Title\": \"Data Scientist\",\n    \"Industry\": \"Financial Services\",\n    \"Reason for Match\": \"Matches your PhD in Statistics, experience with machine learning models detailed in your CV, and stated interest in the Fintech sector.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/0987654321\"\n  },\n  {\n    \"Company Name\": \"FinSecure Corp\",\n    \"Job Title\": \"Data Scientist\",\n    \"Industry\": \"Financial Services\",\n    \"Reason for Match\": \"Matches your PhD in Statistics, experience with machine learning models detailed in your CV, and stated interest in the Fintech sector.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/0987654321\"\n  },\n  {\n    \"Company Name\": \"FinSecure Corp\",\n    \"Job Title\": \"Data Scientist\",\n    \"Industry\": \"Financial Services\",\n    \"Reason for Match\": \"Matches your PhD in Statistics, experience with machine learning models detailed in your CV, and stated interest in the Fintech sector.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/0987654321\"\n  }\n]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1780,
+        380
+      ],
+      "id": "ee42cded-74c0-491b-8204-560ff3e2afe9",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        160
+      ],
+      "id": "338c3855-364f-4e82-b72c-102d3064a0d3",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1KvXfmXIP5fYZmUMuJuooXqIXjpn-QMBi",
+          "mode": "list",
+          "cachedResultName": "CVn8n.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1KvXfmXIP5fYZmUMuJuooXqIXjpn-QMBi/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -440,
+        240
+      ],
+      "id": "4b9fc6a8-8bd7-47b4-9959-172a4861f943",
+      "name": "DownloadResume",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "zkH0qGMxlxx6fM6g",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        240
+      ],
+      "id": "aa36c256-4773-40a2-9cc2-a72890523799",
+      "name": "Extract Information from Resume PDF"
+    },
+    {
+      "parameters": {
+        "method": "=POST",
+        "url": "=https://api.apify.com/v2/acts/curious_coder~linkedin-jobs-scraper/run-sync-get-dataset-items?token={{ $('Input').item.json.ApifyAPIKey }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Input').item.json.ApifyAPIKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"count\": 100,\n    \"scrapeCompany\": true,\n    \"urls\": [\n        \"https://www.linkedin.com/jobs/search?keywords=Software%20Engineer&location=%E7%BE%8E%E5%9B%BD&geoId=103644278&f_TPR=r86400&f_WT=1%2C3&f_JT=F&position=1&pageNum=0\"\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        240
+      ],
+      "id": "c1816082-faea-4939-8e87-f856095a11f5",
+      "name": "ScrapeLinkedin"
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=You are an expert AI assistant specializing in career matching and job recommendation.\n\nYour Goal:\nYour primary task is to analyze a provided dataset of 100 LinkedIn job descriptions {{ $json.Jobs }} , a user's Curriculum Vitae (CV) provided as a string{{ $('SetResumeField').item.json.Resume }}, and the user's job preferences {{ $('Input').item.json.Preference }} is also provided as a string. Based on this analysis, you must identify and select the top 5 most suitable job opportunities for the user from the provided list.\n\nInputs You Will Receive:\n\njob_descriptions {{ $json.Jobs }}: A collection (e.g., list or structured data) containing 100 job descriptions scraped from LinkedIn. Each description should ideally contain details like job title, company name, responsibilities, required qualifications, and an application URL.\nuser_cv{{ $('SetResumeField').item.json.Resume }}: A single string containing the user's full CV text.\nuser_preferences {{ $('Input').item.json.Preference }}: A single string outlining the user's job preferences (e.g., desired roles, industries, company size, location constraints, salary expectations, work culture).\n\n\nYour Task Breakdown:\n\nAnalyze: Meticulously parse and understand the content of the user_cv and user_preferences.\nEvaluate: For each of the 100 job_descriptions:\nExtract key information: Company Name, Job Title, Industry (if explicitly mentioned or inferable), and Application URL.\nCompare the job's requirements, responsibilities, and company details against the user's skills, experience (from user_cv), and stated desires (from user_preferences).\nRank: Assess the suitability of each job for the user based on the comparison. Create a ranked list of all 100 jobs from most to least suitable.\nSelect: Choose the top 5 jobs from your ranked list.\nFormat Output: Prepare the final output containing detailed information for only these 5 selected jobs.\nOutput Requirements:\n\nYou must return a structured list containing exactly 5 job recommendations. For each of the 5 jobs, provide the following specific details:\n\nCompany Name: The name of the hiring company.\nJob Title: The official title of the position.\nIndustry: The industry sector of the company or job (if available/inferable).\nReason for Match: A brief (1-2 sentences) explanation justifying why this specific job is a strong match for the user. This explanation should explicitly reference alignment between the user's CV/preferences and the job description (e.g., \"Matches your 5+ years of Python experience and preference for the Fintech industry mentioned in your preferences.\").\nApplication URL: The direct URL to apply for the job. If the apply URL is not found or empty, return the linkedin link for this job.\n\nOutput format Example:\n[\n  {\n    \"Company Name\": \"Innovatech Solutions\",\n    \"Job Title\": \"Senior Software Engineer\",\n    \"Industry\": \"Technology / SaaS\",\n    \"Reason for Match\": \"Strong alignment with your 7 years of backend development experience (Java/Spring) listed in CV and your preference for mid-sized tech companies.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/1234567890\"\n  },\n  {\n    \"Company Name\": \"FinSecure Corp\",\n    \"Job Title\": \"Data Scientist\",\n    \"Industry\": \"Financial Services\",\n    \"Reason for Match\": \"Matches your PhD in Statistics, experience with machine learning models detailed in your CV, and stated interest in the Fintech sector.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/0987654321\"\n  },\n  {\n    \"Company Name\": \"FinSecure Corp\",\n    \"Job Title\": \"Data Scientist\",\n    \"Industry\": \"Financial Services\",\n    \"Reason for Match\": \"Matches your PhD in Statistics, experience with machine learning models detailed in your CV, and stated interest in the Fintech sector.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/0987654321\"\n  },\n  {\n    \"Company Name\": \"FinSecure Corp\",\n    \"Job Title\": \"Data Scientist\",\n    \"Industry\": \"Financial Services\",\n    \"Reason for Match\": \"Matches your PhD in Statistics, experience with machine learning models detailed in your CV, and stated interest in the Fintech sector.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/0987654321\"\n  },\n  {\n    \"Company Name\": \"FinSecure Corp\",\n    \"Job Title\": \"Data Scientist\",\n    \"Industry\": \"Financial Services\",\n    \"Reason for Match\": \"Matches your PhD in Statistics, experience with machine learning models detailed in your CV, and stated interest in the Fintech sector.\",\n    \"Application URL\": \"https://linkedin.com/jobs/view/0987654321\"\n  }\n]\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1440,
+        -80
+      ],
+      "id": "d858bfc1-5dd6-496d-b98e-ddafe37790a1",
+      "name": "AI Agent: Find Best-matched jobs",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Input').item.json.EmailAddressToReceiveJobRecommendations}}",
+        "subject": "=Your Best-Matched Jobs - {{ $('Schedule Trigger').item.json[\"Day of month\"] }},{{ $('Schedule Trigger').item.json.Month }},{{ $('Schedule Trigger').item.json.Year }} ",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Your Tailored Career Opportunities</title>\n</head>\n<body style=\"font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; line-height: 1.6; color: #333333; background-color: #f5f7fa; margin: 0; padding: 0;\">\n    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n        <tr>\n            <td align=\"center\" style=\"padding: 30px 15px;\">\n                <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color: #ffffff; border-collapse: collapse; box-shadow: 0 0 12px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden;\">\n                    <tr>\n                        <td style=\"background-color: #2a5298; color: #ffffff; padding: 40px 30px; text-align: center;\">\n                            <h1 style=\"margin: 0; font-size: 24px; font-weight: bold;\">Your Personalized Career Opportunities</h1>\n                            <p style=\"margin: 15px 0 0; font-size: 15px; opacity: 0.9;\">Handpicked opportunities aligned with your expertise and preferences</p>\n                        </td>\n                    </tr>\n\n                    <tr><td height=\"30\"></td></tr>\n\n                    <!-- Job 1 -->\n                    <tr>\n                        <td style=\"padding: 0 25px;\">\n                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border: 1px solid #dce3ea; border-radius: 10px; margin-bottom: 25px; overflow: hidden;\">\n                                <tr>\n                                    <td style=\"background-color: #4a6fa5; color: #ffffff; padding: 18px 20px;\">\n                                        <strong style=\"font-size: 18px;\">{{$json.output[0]['Company Name']}}</strong><br>\n                                        <span style=\"font-size: 14px; opacity: 0.9;\">{{$json.output[0]['Job Title']}}</span>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td style=\"padding: 20px; background-color: #ffffff;\">\n                                        <div style=\"background-color: #eef2f7; color: #4a6fa5; border-radius: 20px; padding: 8px 14px; font-size: 13px; display: inline-block; margin-bottom: 14px;\">{{$json.output[0].Industry}}</div>\n                                        <div style=\"margin-bottom: 18px; border-left: 4px solid #4a6fa5; padding-left: 14px; background-color: #f9f9f9; padding-top: 10px; padding-bottom: 10px;\">\n                                            <strong style=\"color: #2a5298; font-size: 15px;\">Why this matches your profile:</strong>\n                                            <p style=\"font-size: 13px; color: #444444; margin: 10px 0 0;\">{{$json.output[0]['Reason for Match']}}</p>\n                                        </div>\n\n                                        <a href=\"{{$json.output[0]['Application URL']}}\" target=\"_blank\" style=\"display: inline-block; background-color: #00c07f; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px;\">Apply Now</a>\n\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n\n                    <!-- Job 2 -->\n                    <tr>\n                        <td style=\"padding: 0 25px;\">\n                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border: 1px solid #dce3ea; border-radius: 10px; margin-bottom: 25px; overflow: hidden;\">\n                                <tr>\n                                    <td style=\"background-color: #4a6fa5; color: #ffffff; padding: 18px 20px;\">\n                                        <strong style=\"font-size: 18px;\">{{$json.output[1]['Company Name']}}</strong><br>\n                                        <span style=\"font-size: 14px; opacity: 0.9;\">{{$json.output[1]['Job Title']}}</span>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td style=\"padding: 20px; background-color: #ffffff;\">\n                                        <div style=\"background-color: #eef2f7; color: #4a6fa5; border-radius: 20px; padding: 8px 14px; font-size: 13px; display: inline-block; margin-bottom: 14px;\">{{$json.output[1].Industry}}</div>\n                                        <div style=\"margin-bottom: 18px; border-left: 4px solid #4a6fa5; padding-left: 14px; background-color: #f9f9f9; padding-top: 10px; padding-bottom: 10px;\">\n                                            <strong style=\"color: #2a5298; font-size: 15px;\">Why this matches your profile:</strong>\n                                            <p style=\"font-size: 13px; color: #444444; margin: 10px 0 0;\">{{$json.output[1]['Reason for Match']}}</p>\n                                        </div>\n\n                                        <a href=\"{{$json.output[1]['Application URL']}}\" target=\"_blank\" style=\"display: inline-block; background-color: #00c07f; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px;\">Apply Now</a>\n\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n\n                    <!-- Job 3 -->\n                    <tr>\n                        <td style=\"padding: 0 25px;\">\n                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border: 1px solid #dce3ea; border-radius: 10px; margin-bottom: 25px; overflow: hidden;\">\n                                <tr>\n                                    <td style=\"background-color: #4a6fa5; color: #ffffff; padding: 18px 20px;\">\n                                        <strong style=\"font-size: 18px;\">{{$json.output[2]['Company Name']}}</strong><br>\n                                        <span style=\"font-size: 14px; opacity: 0.9;\">{{$json.output[2]['Job Title']}}</span>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td style=\"padding: 20px; background-color: #ffffff;\">\n                                        <div style=\"background-color: #eef2f7; color: #4a6fa5; border-radius: 20px; padding: 8px 14px; font-size: 13px; display: inline-block; margin-bottom: 14px;\">{{$json.output[2].Industry}}</div>\n                                        <div style=\"margin-bottom: 18px; border-left: 4px solid #4a6fa5; padding-left: 14px; background-color: #f9f9f9; padding-top: 10px; padding-bottom: 10px;\">\n                                            <strong style=\"color: #2a5298; font-size: 15px;\">Why this matches your profile:</strong>\n                                            <p style=\"font-size: 13px; color: #444444; margin: 10px 0 0;\">{{$json.output[2]['Reason for Match']}}</p>\n                                        </div>\n                                        \n                                        <a href=\"{{$json.output[2]['Application URL']}}\" target=\"_blank\" style=\"display: inline-block; background-color: #00c07f; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px;\">Apply Now</a>\n\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n\n                    <!-- Job 4 -->\n                    <tr>\n                        <td style=\"padding: 0 25px;\">\n                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border: 1px solid #dce3ea; border-radius: 10px; margin-bottom: 25px; overflow: hidden;\">\n                                <tr>\n                                    <td style=\"background-color: #4a6fa5; color: #ffffff; padding: 18px 20px;\">\n                                        <strong style=\"font-size: 18px;\">{{$json.output[3]['Company Name']}}</strong><br>\n                                        <span style=\"font-size: 14px; opacity: 0.9;\">{{$json.output[3]['Job Title']}}</span>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td style=\"padding: 20px; background-color: #ffffff;\">\n                                        <div style=\"background-color: #eef2f7; color: #4a6fa5; border-radius: 20px; padding: 8px 14px; font-size: 13px; display: inline-block; margin-bottom: 14px;\">{{$json.output[3].Industry}}</div>\n                                        <div style=\"margin-bottom: 18px; border-left: 4px solid #4a6fa5; padding-left: 14px; background-color: #f9f9f9; padding-top: 10px; padding-bottom: 10px;\">\n                                            <strong style=\"color: #2a5298; font-size: 15px;\">Why this matches your profile:</strong>\n                                            <p style=\"font-size: 13px; color: #444444; margin: 10px 0 0;\">{{$json.output[3]['Reason for Match']}}</p>\n                                        </div>\n                                        \n                                        <a href=\"{{$json.output[3]['Application URL']}}\" target=\"_blank\" style=\"display: inline-block; background-color: #00c07f; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px;\">Apply Now</a>\n\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n\n                    <!-- Job 5 -->\n                    <tr>\n                        <td style=\"padding: 0 25px;\">\n                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border: 1px solid #dce3ea; border-radius: 10px; margin-bottom: 25px; overflow: hidden;\">\n                                <tr>\n                                    <td style=\"background-color: #4a6fa5; color: #ffffff; padding: 18px 20px;\">\n                                        <strong style=\"font-size: 18px;\">{{$json.output[4]['Company Name']}}</strong><br>\n                                        <span style=\"font-size: 14px; opacity: 0.9;\">{{$json.output[4]['Job Title']}}</span>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td style=\"padding: 20px; background-color: #ffffff;\">\n                                        <div style=\"background-color: #eef2f7; color: #4a6fa5; border-radius: 20px; padding: 8px 14px; font-size: 13px; display: inline-block; margin-bottom: 14px;\">{{$json.output[4].Industry}}</div>\n                                        <div style=\"margin-bottom: 18px; border-left: 4px solid #4a6fa5; padding-left: 14px; background-color: #f9f9f9; padding-top: 10px; padding-bottom: 10px;\">\n                                            <strong style=\"color: #2a5298; font-size: 15px;\">Why this matches your profile:</strong>\n                                            <p style=\"font-size: 13px; color: #444444; margin: 10px 0 0;\">{{$json.output[4]['Reason for Match']}}</p>\n                                        </div>\n         \n                                        <a href=\"{{$json.output[4]['Application URL']}}\" target=\"_blank\" style=\"display: inline-block; background-color: #00c07f; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px;\">Apply Now</a>\n\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n\n                    <tr>\n                        <td style=\"padding: 30px 25px 40px; text-align: center; background-color: #f8f9fa; color: #5a6a7e; border-radius: 0 0 8px 8px;\">\n                            <p style=\"margin: 0 0 10px; font-size: 13px;\">We've carefully selected these opportunities based on your unique professional profile.</p>\n                            <p style=\"margin: 0 0 10px; font-size: 13px;\">Would you like more personalized recommendations? Just let us know!</p>\n                            <p style=\"margin: 18px 0 0; font-weight: bold; font-size: 14px; color: #3d4852;\">Warm regards,<br>Your Career Success Team</p>\n                        </td>\n                    </tr>\n\n                </table>\n            </td>\n        </tr>\n    </table>\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2020,
+        -80
+      ],
+      "id": "7fe3f538-e328-4744-a293-b587e629bf2b",
+      "name": "Email the top job recommendations",
+      "webhookId": "03a0f1de-696a-4a97-b58a-1b2b8376af1b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NheXOwaeH2MAWUTP",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba5b7792-5228-42ea-8c6f-6b941487e826",
+              "name": "Jobs",
+              "value": "={{ JSON.stringify($json) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1100,
+        240
+      ],
+      "id": "09752314-56ee-4acd-8c27-fe29d8f95b7b",
+      "name": "Combine all job information into a single text string"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        800,
+        240
+      ],
+      "id": "7927ff54-6f36-4a6c-a0ba-978f334fedd2",
+      "name": "Aggregate all returned items"
+    },
+    {
+      "parameters": {
+        "content": "This node triggers the workflow to run automatically at a specified time. By default, it's set to trigger at 8:00 AM daily.",
+        "height": 340,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1100,
+        80
+      ],
+      "id": "67f6a40f-57f5-4ae1-8739-95f6d11084fe",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "**NEED YOUR INPUT HERE!**\nThis node sets several input variables used throughout the workflow, such as the Apify API key, job preferences, and the email address to send job recommendations to.",
+        "height": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        80
+      ],
+      "id": "8ce3b47c-003d-40bc-b959-13a3c12ee4fd",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "**NEED YOUR ACTION HERE!**\nThis node downloads the user's resume from Google Drive. **Please upload your resume (PDF) to your Google drive.**",
+        "height": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        80
+      ],
+      "id": "d85cf606-661c-4572-a5af-c847a7cce987",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "This node extracts the text content from the downloaded resume PDF.",
+        "height": 340,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        80
+      ],
+      "id": "368a4335-9d20-41e6-bb9d-e9a2c08b6f64",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "This node sets a variable named \"Resume\" with the extracted text from the user's resume.",
+        "height": 340,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        80
+      ],
+      "id": "0e2c74f5-46a7-443a-aa46-1168daba23cb",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "**NEED YOUR INPUT HERE!**\nThis node scrapes job listings from LinkedIn using an Apify actor.\n\n**Go to linkedin jobs search page on incognito window (to access public version) https://www.linkedin.com/jobs/search/, search with required filters and once you are done, copy the full URL from address bar and paste to replace the \"urls\" value in json.body**",
+        "height": 400,
+        "width": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        360,
+        20
+      ],
+      "id": "9d08a88e-1a3e-4859-a2ab-4f1c7fd99cc0",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "This node aggregates the data returned from the LinkedIn scraper into a single item. ",
+        "height": 340,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        740,
+        80
+      ],
+      "id": "79f36fc2-0855-42f0-aef6-6ceb65b9c673",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "This node takes the aggregated job data (JSON format) and converts it into a single string. ",
+        "height": 340,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        80
+      ],
+      "id": "144ee189-e09d-4fdb-93a9-9d09b7f5f3a3",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "the core node that uses the AI to analyze the scraped job data, the user's resume, and their preferences to find the best-matched jobs.\n\nInput: It receives the scraped job data, the extracted resume text, and the user's preferences.\n\nOutput: a structured list containing exactly 5 job recommendations. For each of the 5 jobs, the following specific details are provided:\nCompany Name\nJob Title\nIndustry\nReason for Match\nApplication URL",
+        "height": 980,
+        "width": 580,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        -400
+      ],
+      "id": "fa0a3270-269a-4039-8926-0784f514d301",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "This node sends an email to the user with the top job recommendations.",
+        "height": 300,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        -180
+      ],
+      "id": "e897ca2d-d9cd-4fde-a904-89a33a39dfed",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## Workflow Setup Guide\n### Follow these steps to set up the workflow:\n\n### 1. Configure Input Node:\nOpen the \"Input\" node in the workflow.\nFill in the required fields:\n- ApifyAPIKey: Enter your Apify API key. (Log in to Apify: https://www.apify.com?fpr=oljm1 -> Settings -> API & Integration)\n- Preference: Specify your job search preferences (e.g., \"prefer startups\").\n- EmailAddressToReceiveJobRecommendations: Provide the email address where you want to receive job recommendations.\n\n### 2. Configure LinkedIn Job Search URL:\n\n- Open an incognito/private browsing window in your web browser. This ensures you access the public version of LinkedIn, which is important for the scraper.\n- Go to the LinkedIn Jobs search page: https://www.linkedin.com/jobs/search/\n- Use the LinkedIn search interface to search for jobs with your desired filters (keywords, location, experience level, etc.). **Make sure to add the filter \"Past 24 hours\"**\n- Copy the full URL from your browser's address bar.\n- Open the \"ScrapeLinkedin\" node in the workflow.\n- In the \"jsonBody\" parameter, find the \"urls\" array:\n\"urls\": [\n    \"https://www.linkedin.com/jobs/search/...\"\n]\n- Replace the existing URL ( \"https://www.linkedin.com/jobs/search/...\" ) with the full URL you copied from your incognito window.  Make sure the URL is enclosed in double quotes.",
+        "height": 560,
+        "width": 1320,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        460
+      ],
+      "id": "95516d59-c66e-4a7f-9345-17ca12d486de",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        120
+      ],
+      "id": "0fc3508d-2cae-4ac8-af55-751316d3e815",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4QExgABYotQvsU4s",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        360
+      ],
+      "id": "2ea765b2-8d2e-4093-bd54-5a48609d88a4",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4QExgABYotQvsU4s",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetResumeField": {
+      "main": [
+        [
+          {
+            "node": "ScrapeLinkedin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input": {
+      "main": [
+        [
+          {
+            "node": "DownloadResume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent: Find Best-matched jobs",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DownloadResume": {
+      "main": [
+        [
+          {
+            "node": "Extract Information from Resume PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Information from Resume PDF": {
+      "main": [
+        [
+          {
+            "node": "SetResumeField",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ScrapeLinkedin": {
+      "main": [
+        [
+          {
+            "node": "Aggregate all returned items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent: Find Best-matched jobs": {
+      "main": [
+        [
+          {
+            "node": "Email the top job recommendations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine all job information into a single text string": {
+      "main": [
+        [
+          {
+            "node": "AI Agent: Find Best-matched jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate all returned items": {
+      "main": [
+        [
+          {
+            "node": "Combine all job information into a single text string",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent: Find Best-matched jobs",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "429e8159-e403-46f9-b7d0-3dc5469249d7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f638a47e4e563f91fde8b98ed9f5fa6a9faa41a207143e9ce05d85200c905524"
+  },
+  "id": "zbVcv0SXPc4fA0FI",
+  "tags": [
+    {
+      "createdAt": "2025-04-13T06:21:01.552Z",
+      "updatedAt": "2025-04-13T06:21:01.552Z",
+      "id": "eCN4xVqsbzoJ8LSK",
+      "name": "Linkedin"
+    }
+  ]
+}
