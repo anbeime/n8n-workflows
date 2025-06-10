@@ -1,0 +1,318 @@
+{
+  "name": "嵌套实现对话内加图表",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -180
+      ],
+      "id": "c11ab58f-c1cd-4d8c-b08c-5e576a3a7e6e",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "你好我是你的AI数据库小助手，请告诉我你想查询的数据，我会为您提供解释，生成SQL代码，返回数据表格以及为您画出相应的图表。",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        20
+      ],
+      "id": "ec2a2fa8-727c-44d4-bd7a-b04ac390aa3d",
+      "name": "When chat message received",
+      "webhookId": "5e905399-2b27-4350-b928-46cc8ad0f4af"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=你是一个 AI 助手，专门解析 SQL 查询返回的 Markdown 表格，并生成数据可视化图表的 JSON 配置。\n\n### 📊 SQL 结果（Markdown 格式）：\n\n{{ $json.output }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=\n### **你的任务**\n1. **解析 SQL 查询结果**：\n   - **第一行是列名**\n   - **后续是数据，每列由 '|' 分隔**\n2. **分析数据，选择最佳 X 轴、Y 轴**：\n   - **X 轴 应该是类别字段（文本或日期）**\n   - **Y 轴 应该是数值字段（销售额、数量等）**\n3. **决定最适合的图表类型**：\n   - **柱状图（bar）**：如果 X 轴是类别，Y 轴是数值\n   - **折线图（line）**：如果 X 轴是日期\n   - **饼图（pie）**：如果数据适用于分类占比\n4. **返回 JSON 格式的 QuickChart 配置**：\n```json\n{\n  \"chart_type\": \"bar\",\n  \"x_axis\": \"selected_column_for_x\",\n  \"y_axis\": \"selected_column_for_y\",\n  \"chartConfig\": {\n    \"type\": \"bar\",\n    \"data\": {\n      \"labels\": [\"X1\", \"X2\", \"X3\"],\n      \"datasets\": [\n        {\n          \"label\": \"Y Label\",\n          \"data\": [value1, value2, value3],\n          \"backgroundColor\": \"rgba(54, 162, 235, 0.6)\"\n        }\n      ]\n    },\n    \"options\": {\n      \"responsive\": true\n    }\n  }\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        120,
+        120
+      ],
+      "id": "241a27e3-36c5-45dc-babb-94d931cc72ce",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c7df66bc-a9ca-42d6-8957-0fa973818499",
+              "name": "response",
+              "value": "={{ \"https://quickchart.io/chart?width=400&height=300&c=\" + encodeURIComponent(JSON.stringify($json.output.chartConfig)) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        120
+      ],
+      "id": "1a9b410f-e461-4641-86c6-f9926e2de136",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"chart_type\": [\"bar\", \"line\", \"pie\", \"mixed\"],\n  \"x_axis\": [\"string\", \"null\"],  \n  \"y_axis\": [\"string\", \"number\", \"null\"],\n  \"chartConfig\": {\n    \"type\": [\"bar\", \"line\", \"pie\", \"mixed\"],\n    \"data\": {\n      \"labels\": [\"string\", \"null\"],  \n      \"datasets\": [\n        {\n          \"label\": \"string\",\n          \"data\": [\"number\", \"string\",\"null\"],  \n          \"backgroundColor\": [\"string\", \"null\"],  \n          \"borderColor\": [\"string\", \"null\"],\n          \"yAxisID\": [\"string\", \"null\"]\n        }\n      ]\n    },\n    \"options\": {\n      \"responsive\": [\"boolean\", \"null\"],\n      \"spanGaps\": true\n    }\n  }\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        280,
+        300
+      ],
+      "id": "af8b2be6-8324-4921-b158-70b7fcd145e2",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        740,
+        40
+      ],
+      "id": "9e45382e-98eb-46a5-abcf-47173863caa7",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5bb7e445-bc25-40a2-b5ae-0861b10d6491",
+              "name": "output",
+              "value": "={{ $json.output }}  \n\n \n![Chart]({{ $json.response}})",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        40
+      ],
+      "id": "1d3287f5-8b40-4c2b-adf5-71f90266ca53",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "l2NTBBMlHtUsGXh2",
+          "mode": "list",
+          "cachedResultName": "子SQL流程"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -100,
+        20
+      ],
+      "id": "de4ba13c-8c2c-4988-8468-afb503b498e1",
+      "name": "子SQL流程"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "jiJrnYg9UN6vmMKV",
+          "mode": "list",
+          "cachedResultName": "一次性执行部分子流程"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -100,
+        -180
+      ],
+      "id": "fe551736-1a32-4846-847c-46e2b4a197d7",
+      "name": "一次性执行部分子流程"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "deepseek-chat",
+          "mode": "list",
+          "cachedResultName": "deepseek-chat"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        320
+      ],
+      "id": "a48d87d9-3743-417e-8e20-b223bf5ea70c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "SiPDeXHnu5Fl2v4t",
+          "name": "Deepseek"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "一次性执行部分子流程",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "子SQL流程",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "子SQL流程": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "22d53bb5-8b10-47cd-9f12-62b6c788a8b4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1fc85153dfc4ea22a8172f0d7347fa9f591f71e2064dc331f7bdc1d7ee422e7a"
+  },
+  "id": "tzdx3UYIX8vGpQiN",
+  "tags": [
+    {
+      "createdAt": "2025-02-25T10:55:04.069Z",
+      "updatedAt": "2025-02-25T10:55:04.069Z",
+      "id": "KUfSxWPdWLM64AbD",
+      "name": "嵌套方法实现chat内加图标"
+    }
+  ]
+}

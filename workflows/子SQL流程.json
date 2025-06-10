@@ -1,0 +1,574 @@
+{
+  "name": "子SQL流程",
+  "nodes": [
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "82272814-d5a2-45a7-a11c-2505d58e3dc2",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        1560,
+        520
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {},
+      "id": "2fa537b3-cd84-4340-bf05-11e03a4c1b73",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        2300,
+        560
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "id": "2017b924-7f79-4a53-ade3-c889cc03b91e",
+      "name": "Extract data from file",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        880,
+        460
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=Here is the database schema: {{ $json.schema }}\nHere is the user request: {{ $('input').item.json.chatInput }}\n",
+        "options": {
+          "humanMessage": "TOOLS\n------\nAssistant can ask the user to use tools to look up information that may be helpful in answering the users original question. The tools the human can use are:\n\n{tools}\n\n{format_instructions}\n\nUSER'S INPUT\n--------------------\nHere is the user's input (remember to respond with a markdown code snippet of a json blob with a single action, and NOTHING else):\n\n{{input}}",
+          "systemMessage": "Assistant is a large language model trained by Deepseek\n\nAssistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nAssistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, Assistant is a powerful system that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.\n\nHelp user to work with the PostgreSQL database. Please help to generate SQL code with the help of the schema information only when necessary, if you can answer without generating  a sql code , don't generate\n\nPlease wrap any sql commands into triple quotes. You don't have a tool to run SQL, so the user will do that instead of you.\n\n请用中文回答"
+        }
+      },
+      "id": "321c48c9-598d-493f-a93d-32a9b4c538da",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1440,
+        340
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "content": "## 在每条聊天消息上:\n\n* 工作流程从本地的 schema 文件获取数据，并将其提取为一个 JSON 对象。这样，我们就实现了两个重要的改进:\n  * 更快的处理时间，因为我们不需要从速度缓慢的远程数据库获取每个表的结构\n  * 即使不查看实际数据，Agent 也能了解数据库结构\n* 然后将 DB schema 转换为一个长字符串，在输入 Agent 节点之前，会先将来自 Chat Trigger 的 JSON 字段添加进去。\n\n",
+        "height": 449,
+        "width": 1063,
+        "color": 6
+      },
+      "id": "f0cfceae-1cee-4198-95a4-0358e2c4137b",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        280,
+        260
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### LangChain AI Agent 的 system prompt 被修改了。\n它只使用数据库 schema 来生成 SQL 查询。Agent 创建这些查询，但不会执行它们，而是将它们传递给后续节点。\n\n**示例：**  \n“你能给我展示所有客户的列表吗？”\n\n只有在必要时才会生成查询；对于某些请求，可能不需要查询。这是因为某些问题可以直接回答，而无需执行 SQL。\n\n**示例：**  \n“你能列出所有表吗？”\n",
+        "height": 714.7896619176862,
+        "width": 445.66588600071304,
+        "color": 6
+      },
+      "id": "e6ee195c-c9ee-49fe-bdd6-31da2f93fef7",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1360,
+        40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42abd24e-419a-47d6-bc8b-7146dd0b8314",
+              "name": "sessionId",
+              "type": "string",
+              "value": "={{ $('input').first().json.sessionId }}"
+            },
+            {
+              "id": "39244192-a1a6-42fe-bc75-a6fba1f264df",
+              "name": "action",
+              "type": "string",
+              "value": "={{ $('input').first().json.action }}"
+            },
+            {
+              "id": "f78c57d9-df13-43c7-89a7-5387e528107e",
+              "name": "chatinput",
+              "type": "string",
+              "value": "={{ $('input').first().json.chatInput }}"
+            },
+            {
+              "id": "e42b39eb-dfbd-48d9-94ed-d658bdd41454",
+              "name": "schema",
+              "type": "string",
+              "value": "={{ $json.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a22e0d0a-2459-422e-9c8a-f85e608439af",
+      "name": "Combine schema data and chat input",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1100,
+        460
+      ],
+      "executeOnce": true,
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "fileSelector": "./sales_postgresql.json",
+        "options": {}
+      },
+      "id": "ac0d35a1-c0d1-4bef-ade8-332c37bb73ce",
+      "name": "Load the schema from the local file",
+      "type": "n8n-nodes-base.readWriteFile",
+      "position": [
+        640,
+        460
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ebbe194a-4b8b-44c9-ac19-03cf69d353bf",
+              "name": "query",
+              "type": "string",
+              "value": "={{ \n  ($json.output.match(\"```sql\\\\s*([\\\\s\\\\S]*?)\\\\s*```\") || [])[1] \n  || \"\" \n}}\n"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "7f83cf30-7676-4ff7-a505-d6d9fd8ef3ab",
+      "name": "Extract SQL query",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1860,
+        380
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "2963d04d-9d79-49f9-b52a-dc8732aca781",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.query }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e5024f49-93c0-4f52-91e2-2e77f002d9e9",
+      "name": "Check if query exists",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2020,
+        380
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "content": "## SQL 查询提取\n检查 Agent 的响应是否包含 SQL 查询。如果包含，则使用正则表达式提取该查询。\n",
+        "height": 278.8174358200552,
+        "width": 317.8901548206743,
+        "color": 3
+      },
+      "id": "29984041-b154-4a24-89a9-8dcdabbdddf9",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1840,
+        280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 676,
+        "width": 903,
+        "color": 6
+      },
+      "id": "c2246725-9f8b-440f-b90c-7d81a4c75bec",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1820,
+        100
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "AI Agent 会记住 schema、问题，以及最终答案，但不会记住数据值，因为查询是在外部执行的。Agent 无法访问数据库内容。\n",
+        "height": 80,
+        "width": 257,
+        "color": 3
+      },
+      "id": "5dd109dd-f770-4712-9313-ed7c9f4d84bb",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1560,
+        660
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "- SQL 节点会访问数据库并执行查询。结果会被格式化，便于阅读。\n- 聊天回复和查询结果都会显示在聊天窗口中。\n",
+        "height": 123.43139661532095,
+        "width": 308.8514666587585,
+        "color": 3
+      },
+      "id": "de6f4235-4db6-4d1c-85a0-a6f91c828322",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1840,
+        120
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "当 Agent 在没有生成 SQL 查询的情况下进行回复时，你会立即收到一个无需额外处理的答案。\n",
+        "height": 89.90186716520257,
+        "width": 250.40895053328057,
+        "color": 3
+      },
+      "id": "6b113d4b-5deb-4064-91b3-c80f95a9dd11",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2440,
+        640
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f944d21f-6aac-4842-8926-4108d6cad4bf",
+              "name": "sqloutput",
+              "type": "string",
+              "value": "={{ Object.keys($jmespath($input.all(),'[].json')[0]).join(' | ') }} \n{{ ($jmespath($input.all(),'[].json')).map(obj => Object.values(obj).join(' | ')).join('\\n') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cb69b760-905b-466b-a96c-e70f68deee47",
+      "name": "Format query results",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2380,
+        180
+      ],
+      "executeOnce": true,
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aa55e186-1535-4923-aee4-e088ca69575b",
+              "name": "output",
+              "type": "string",
+              "value": "={{ $json.output }}\n\nSQL result:\n```markdown\n{{ $json.sqloutput }}\n```"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4f991e3d-32b7-46fd-8ce0-7719e4d1a365",
+      "name": "Prepare final output",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2520,
+        460
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "6c61e293-7692-41ea-be3b-6e065f664669",
+      "name": "Combine query result and chat answer",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2300,
+        380
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $json.query }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2180,
+        180
+      ],
+      "id": "183d2c76-1716-455e-99cf-b33f3b040c02",
+      "name": "Final SQL result",
+      "credentials": {
+        "postgres": {
+          "id": "ueNKVcBlzEaRAi1I",
+          "name": "Postgres account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "deepseek-chat",
+          "mode": "list",
+          "cachedResultName": "deepseek-chat"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1420,
+        560
+      ],
+      "id": "6570f9a0-36eb-45e7-a953-805cbd4b131b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "SiPDeXHnu5Fl2v4t",
+          "name": "Deepseek"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        460
+      ],
+      "id": "bf14e365-6d3e-4c10-9272-b6722c636aa2",
+      "name": "input"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract data from file": {
+      "main": [
+        [
+          {
+            "node": "Combine schema data and chat input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Extract SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine schema data and chat input": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load the schema from the local file": {
+      "main": [
+        [
+          {
+            "node": "Extract data from file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract SQL query": {
+      "main": [
+        [
+          {
+            "node": "Check if query exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if query exists": {
+      "main": [
+        [
+          {
+            "node": "Combine query result and chat answer",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Final SQL result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format query results": {
+      "main": [
+        [
+          {
+            "node": "Combine query result and chat answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine query result and chat answer": {
+      "main": [
+        [
+          {
+            "node": "Prepare final output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final SQL result": {
+      "main": [
+        [
+          {
+            "node": "Format query results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "input": {
+      "main": [
+        [
+          {
+            "node": "Load the schema from the local file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "491292a6-56cb-46de-bb34-c98987d8ff42",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1fc85153dfc4ea22a8172f0d7347fa9f591f71e2064dc331f7bdc1d7ee422e7a"
+  },
+  "id": "l2NTBBMlHtUsGXh2",
+  "tags": [
+    {
+      "createdAt": "2025-02-25T10:55:04.069Z",
+      "updatedAt": "2025-02-25T10:55:04.069Z",
+      "id": "KUfSxWPdWLM64AbD",
+      "name": "嵌套方法实现chat内加图标"
+    }
+  ]
+}

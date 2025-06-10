@@ -1,0 +1,336 @@
+
+{
+  "nodes": [
+    {
+      "parameters": {
+        "inputDataFieldName": "audio",
+        "name": "=audio-{{ $('生成一个UUID1').item.json.uuid.slice(0,8) }}.mp3 ",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -240,
+        560
+      ],
+      "id": "a8c300ce-f6b5-41cf-9683-332c4fbdd1c7",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "6q3I9UHER6dmhI6G",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 火山引擎早安电台语音",
+        "height": 480,
+        "width": 2240,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2220,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "9d9dd751-a953-4cab-87b4-33ced41280a1",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "action": "generate",
+        "dataPropertyName": "uuid"
+      },
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        560
+      ],
+      "id": "0526696a-c506-4b5c-b515-baf2c5f99302",
+      "name": "生成一个UUID1"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "text",
+              "value": "= {{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dd998b77-f975-4a9a-9047-3da78a5fb41d",
+      "name": "设置待生成文字1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        -1140,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openspeech.bytedance.com/api/v1/tts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer;{{YOUR_API_TOKEN}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"app\": {\n    \"appid\": \"{{YOUR_APP_ID}}\",\n    \"token\": \"{{suiyi_TOKEN}}\",\n    \"cluster\": \"volcano_tts\"\n  },\n  \"user\": {\n    \"uid\": \"uid123\"\n  },\n  \"audio\": {\n    \"voice_type\": \"ICL_zh_female_zhixingwenwan_tob\",\n    \"emotion\": \"happy\",\n    \"encoding\": \"mp3\",\n    \"enable_emotion\": true,\n    \"speed_ratio\":1.1,\n    \"speed_ratio\": 1.0\n  },\n  \"request\": {\n    \"reqid\": \"{{ $json.uuid }}\",\n    \"text\": \"{{ $('设置待生成文字1').item.json.text }}\",\n    \"text_type\": \"ssml\",\n    \"operation\": \"query\"\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -680,
+        560
+      ],
+      "id": "0dd02e9b-0961-4bf3-82fe-e9ac2c83f639",
+      "name": "请求生成音频1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.today }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=你是一个心理鸡汤大师。\n今天是 {{ $json.today }}，请帮我生成一段【早安电台的问候语】。\n\n要求：\n- 控制在 **100 字以内**\n- 内容温暖、富有感染力、适合在早晨广播\n- 语言简洁、有画面感\n- 开头以 \"早安,我的朋友,今天是...\"开头"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -1540,
+        500
+      ],
+      "id": "a3dc7b20-79c1-4161-8026-d22e31f7ff9b",
+      "name": "Basic LLM Chain2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1580,
+        720
+      ],
+      "id": "c87dc849-c3e5-4da1-9008-6096a41bf8f7",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZNBiXgkP6HbWeUYn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ebb2a360-5559-438f-9202-463e759f74d2",
+              "name": "today",
+              "value": "={{ new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1900,
+        560
+      ],
+      "id": "851696e3-702b-4e15-8c0a-ee2acef68534",
+      "name": "设置日期"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2140,
+        560
+      ],
+      "id": "92598d3a-6c08-4aaa-b179-2ac48482c678",
+      "name": "定时触发"
+    },
+    {
+      "parameters": {
+        "jsCode": "const base64Audio = $json.data;\nconst now = new Date().toISOString().replace(/[:.]/g, '-');\nconst fileName = `tts-${now}.mp3`;\n\nreturn [{\n  binary: {\n    audio: {\n      data: Buffer.from(base64Audio, 'base64'),\n      mimeType: 'audio/mpeg',\n      fileName\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        560
+      ],
+      "id": "77a6018b-e369-4c83-9dbd-9ca71ceeb0e5",
+      "name": "提取音频并重命名1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        720
+      ],
+      "id": "6733ce7e-e4b9-4a21-945b-52cd075781b1",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "Q0HHG0GA8xOiro5F",
+          "name": "DeepSeek account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "生成一个UUID1": {
+      "main": [
+        [
+          {
+            "node": "请求生成音频1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "设置待生成文字1": {
+      "main": [
+        [
+          {
+            "node": "生成一个UUID1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "请求生成音频1": {
+      "main": [
+        [
+          {
+            "node": "提取音频并重命名1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain2": {
+      "main": [
+        [
+          {
+            "node": "设置待生成文字1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "设置日期": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "定时触发": {
+      "main": [
+        [
+          {
+            "node": "设置日期",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "提取音频并重命名1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3886e1e9c6c0e6eb98d84479b90e355a5a967e32c17c84fdacb4e070bf126374"
+  }
+}

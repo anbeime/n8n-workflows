@@ -1,0 +1,635 @@
+{
+  "name": "Crypto Twitter 打工人",
+  "nodes": [
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "from datetime import datetime, timedelta\n\n# 获取当前 UTC 时间\nnow = datetime.utcnow()\n\n# 初始化一个空列表，用于存储所有符合条件的新闻项\nfiltered_news_items = []\n\n# 遍历输入数据\nfor item in _input.all():\n    # 确保每个 item 有 JSON 数据\n    if hasattr(item, 'json'):\n        # 筛选出发布时间在XX分钟以内的新闻\n        if \"results\" in item.json:\n            for news in item.json[\"results\"]:\n                if \"published_at\" in news:\n                    published_time = datetime.strptime(news[\"published_at\"], \"%Y-%m-%dT%H:%M:%SZ\")\n                    time_difference = now - published_time\n                    if time_difference <= timedelta(minutes=30) and news[\"kind\"] == \"news\":\n                        # 将符合条件的新闻添加到结果中\n                        filtered_news_items.append({\n                            #\"kind\": news[\"kind\"],\n                           # \"domain\": news[\"domain\"],           \n                            \"title\": news[\"title\"],\n                            #\"published_at\": news[\"published_at\"],\n                            \"url\": news[\"url\"],\n                           \n                          \n                        })\n\n# 返回最新发布的新闻项（结构化数据）\nreturn filtered_news_items"
+      },
+      "id": "c68e403b-2e7b-46a0-9dbd-93f13b2cf987",
+      "name": "Extract Meta",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -40,
+        500
+      ],
+      "executeOnce": true,
+      "typeVersion": 2,
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "ac8ab8d0-3c7d-42b8-bb4d-72cd8dc58196",
+      "name": "Visit GH Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        160,
+        500
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {},
+      "id": "adc3d3b3-f8a1-47ab-9232-ee47cd9b768d",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1640,
+        500
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.message.content.twitter }}",
+        "additionalFields": {}
+      },
+      "id": "462c577c-4346-4a77-9696-3c921a037d66",
+      "name": "X",
+      "type": "n8n-nodes-base.twitter",
+      "position": [
+        1360,
+        500
+      ],
+      "executeOnce": false,
+      "typeVersion": 2,
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "5OflWGMqg7Q0JdZi",
+          "name": "X account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "触发频率 这里设置为90分钟\n",
+        "height": 260,
+        "width": 185,
+        "color": 6
+      },
+      "id": "6553f96f-fcf7-4a3e-8dc5-53527a13973b",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "DeepSeek R1 考虑所有信息生成X的帖子和telegram的详细报告",
+        "height": 327,
+        "width": 325,
+        "color": 4
+      },
+      "id": "7146c379-814c-40ac-a753-f889ccc384b6",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        920,
+        840
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://cryptopanic.com/api/v1/posts/?auth_token=3a633d4668edb6614af1d67ce337fb8dddf7dd80&public=true",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        500
+      ],
+      "id": "a9340c3f-a53d-428e-be1d-ba9c1d9f5dde",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 90
+            }
+          ]
+        }
+      },
+      "id": "a7566031-a75e-4579-bc46-aaa21e3cbaad",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -440,
+        500
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "从免费的 CryptoPanic API得到信息",
+        "height": 260,
+        "width": 185,
+        "color": 5
+      },
+      "id": "81410697-9f82-4610-b201-9955f2512832",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -280,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "提取最新的新闻并且提取信息\n",
+        "height": 260,
+        "width": 185,
+        "color": 5
+      },
+      "id": "a3a1575d-05e6-4fce-baca-0afc18046e72",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "访问网页获取更多内容",
+        "height": 260,
+        "width": 185,
+        "color": 5
+      },
+      "id": "6fe4f486-d556-4966-8078-84068f0073f9",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        120,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Deepseek v3 提取网页里的内容",
+        "height": 260,
+        "width": 365,
+        "color": 4
+      },
+      "id": "07812dd3-e0cd-4f05-abd0-1918a37f8ebb",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        360,
+        860
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "deepseek-reasoner",
+          "mode": "list",
+          "cachedResultName": "DEEPSEEK-REASONER"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an AI-powered social media assistant specializing in crafting engaging Twitter posts for the crypto community. Your role is to summarize the latest crypto news from {{ $json.content }}in a clear, concise, and human-like tone.\n\nGuidelines:\nOutput Format: Always provide the output in JSON format with a field for \"twitter\" (the actual post content) and \"telegram\" (the actual message send to telegram) .\nCharacter Limit: Ensure the Twitter post stays under 280 characters, including spaces. No limit for telegram message. \nVoice and Tone: Write in a relatable and conversational style to connect with the crypto audience—avoid robotic phrasing or overly formal language.\n\nNo need to include URL",
+              "role": "system"
+            },
+            {
+              "content": "=Using the following details, from {{ $json.content }}, generate only 1 Twitter post and 1 telegram report/message :\n\nConstraints:\nCharacter Limit: Keep the Twitter post under 280 characters, including the link.\nNeutral Tone: Ensure the tone remains neutral and avoids personal involvement (e.g., do not use phrases like \"my journey\" or \"I found it fascinating\").\nTelegram report should be much more details and more indepth.\nOutput Format: Provide the response in JSON with the following structure:\njson\n\n{\n  \"twitter\": \"Your Twitter post here\"\n  \"telegram\": \"Your Twitter summary here\"\n}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "66c4a667-69a0-4248-88f2-bf6d2b8da8f1",
+      "name": "DeepSeek R1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        960,
+        960
+      ],
+      "typeVersion": 1.7,
+      "alwaysOutputData": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "LXNPwjKMdK1UVvG6",
+          "name": "DeepSeek"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Post in X\n",
+        "height": 271,
+        "width": 246,
+        "color": 6
+      },
+      "id": "5bc6785e-e5df-4cd4-baa9-271bbf7305bf",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1280,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## AI 社交媒体打工人\n# 自动总结加密货币新闻并在X上发帖",
+        "height": 120,
+        "width": 600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        300,
+        160
+      ],
+      "id": "9a105a7d-93b7-44b5-b9b3-5a4b5f1b04a4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "GPT4o 考虑所有信息生成X的帖子和telegram的详细报告",
+        "height": 327,
+        "width": 325,
+        "color": 4
+      },
+      "id": "7dee65b3-c28e-47a5-966e-389748330a07",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        920,
+        380
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "GPT3.5 提取网页里的内容",
+        "height": 260,
+        "width": 365,
+        "color": 4
+      },
+      "id": "3e76cea5-c427-4d3f-a4c4-7f9dfaed6e99",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        360,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=你是一个由加密货币博主，专注于为加密社区撰写吸引人的Twitter帖子。你的任务是以清晰、简洁且人性化的语气总结来自{{ $json.content }}的最新加密新闻。\n\n指南：\n输出格式：始终以JSON格式提供输出，包含“twitter”（实际的帖子内容）和“telegram”（发送到Telegram的实际消息）字段。\n字符限制：确保Twitter帖子不超过280个字符（包括空格）。Telegram消息没有字符限制。\n语气和语调：以易于产生共鸣和对话的方式写作，以与加密社区建立联系——避免机械化的措辞或过于正式的语言。\n无需包含URL。",
+              "role": "system"
+            },
+            {
+              "content": "=使用以下详细信息，从{{ $json.content }}中生成1条Twitter帖子和1条Telegram报告/消息，总结所有新闻：\n\n约束条件：\n字符限制：Twitter帖子保持在280个字符以内，包括链接。\n中立语气：确保语气保持中立，避免个人参与（例如，不要使用“我的旅程”或“我发现这很有趣”等短语）。\nTelegram报告应更加详细和深入。\n输出格式：以JSON格式提供响应，结构如下：\njson\n\n{\n  \"twitter\": \"Your Twitter post here\"\n  \"telegram\": \"Your Twitter summary here\"\n}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "c0d9b54f-a249-4afb-9f7a-cae55d09dccb",
+      "name": "Summary news GPT",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        960,
+        500
+      ],
+      "typeVersion": 1.7,
+      "alwaysOutputData": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "tHC6Dtlocib5h4Zq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "=message.content"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        760,
+        500
+      ],
+      "id": "ef18eeb5-7251-4350-b5db-7e16b323a311",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message.content"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        780,
+        960
+      ],
+      "id": "5458ac82-def2-4a51-8296-be5558d71847",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "chatId": "7588994784",
+        "text": "={{ $json.message.content.telegram }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        200
+      ],
+      "id": "31daec69-a052-4b0f-9be2-807062fc912d",
+      "name": "Telegram",
+      "webhookId": "46fbb0c5-d407-4335-a3c2-bccaec99a3be",
+      "credentials": {
+        "telegramApi": {
+          "id": "7psRuMWwicqjdCnj",
+          "name": "Ai Asistant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Detailed report to telegram\n",
+        "height": 271,
+        "width": 246,
+        "color": 6
+      },
+      "id": "74c79487-5478-423e-85f6-dbd9b82e5e85",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1280,
+        120
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=从这里面提取有用的信息{{ $json.data }} 只要全部的content内容 其他的一概不要 不要title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        400,
+        500
+      ],
+      "id": "a76b455a-4ffa-4def-97d8-302ac8b6d906",
+      "name": "ContentExtraction GPT3.5",
+      "credentials": {
+        "openAiApi": {
+          "id": "tHC6Dtlocib5h4Zq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "deepseek-chat",
+          "mode": "list",
+          "cachedResultName": "DEEPSEEK-CHAT"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "从这里面提取有用的信息{{ $json.data }} 只要全部的content内容和文章连接 其他的一概不要 不要title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        400,
+        960
+      ],
+      "id": "2484049b-33ad-481e-94e9-026aa428168f",
+      "name": "ContentExtraction DeepSeekv3",
+      "credentials": {
+        "openAiApi": {
+          "id": "LXNPwjKMdK1UVvG6",
+          "name": "DeepSeek"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "X": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Meta": {
+      "main": [
+        [
+          {
+            "node": "Visit GH Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Visit GH Page": {
+      "main": [
+        [
+          {
+            "node": "ContentExtraction GPT3.5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek R1": {
+      "main": [
+        []
+      ]
+    },
+    "Summary news GPT": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "X",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Summary news GPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek R1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ContentExtraction GPT3.5": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ContentExtraction DeepSeekv3": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "17f955ad-5529-4db2-929b-1fe89c0cdd37",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f638a47e4e563f91fde8b98ed9f5fa6a9faa41a207143e9ce05d85200c905524"
+  },
+  "id": "phueXsQoZDVElS8S",
+  "tags": [
+    {
+      "createdAt": "2025-01-26T15:22:52.143Z",
+      "updatedAt": "2025-01-26T15:22:52.143Z",
+      "id": "dNuSmJmhSOBNp9lV",
+      "name": "Social Media"
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "name": "一次性执行部分子流程",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {}
+      },
+      "id": "cf3a1215-76c6-4e0c-9000-7c2a8b833433",
+      "name": "Convert data to Json",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        740,
+        260
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## 前期工作流程设置 \n创建一个免费的 Postgresql 并导入你的数据库。\n\n",
+        "height": 174.60585869504342,
+        "width": 312.47220527158765,
+        "color": 6
+      },
+      "id": "a00a8d27-5441-4437-bfa4-4b85468dfb7c",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        720,
+        40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 只需运行此部分一次 \n\n* 从托管于本地 PostgreSQL 的数据库中加载所有表的列表\n* 提取每个表的数据库结构并添加表名\n* 将结构转换为二进制 JSON 格式\n* 将结构保存到本地的 `./sales_postgresql.json` 文件中\n\n***现在你可以使用聊天来“对”你的数据说话啦！*** 🎉\n",
+        "height": 466.4256045427794,
+        "width": 1065.0949045120822,
+        "color": 3
+      },
+      "id": "1f4c0718-2342-44b5-a193-073f73bb6ee1",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "./sales_postgresql.json",
+        "options": {}
+      },
+      "id": "3de0d073-1a0a-4248-87e3-3bb64133617d",
+      "name": "Save file locally",
+      "type": "n8n-nodes-base.readWriteFile",
+      "position": [
+        900,
+        260
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "764176d6-3c89-404d-9c71-301e8a406a68",
+              "name": "table",
+              "type": "string",
+              "value": "={{ $('List all tables in a database').item.json.table_name }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "57374d7c-cf97-46ca-a648-8200369e1f48",
+      "name": "Add table name to output",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        560,
+        260
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  column_name, \n  data_type, \n  is_nullable, \n  column_default\nFROM information_schema.columns\nWHERE table_name  = '{{ $json.table_name }}'\n  AND table_schema = 'public'\nORDER BY ordinal_position;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        380,
+        260
+      ],
+      "id": "802a56e2-9575-41e1-92a6-8e003fa8a12b",
+      "name": "Schema Extractor",
+      "credentials": {
+        "postgres": {
+          "id": "ueNKVcBlzEaRAi1I",
+          "name": "Postgres account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT table_name\nFROM information_schema.tables\nWHERE table_schema = 'public';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        200,
+        260
+      ],
+      "id": "1c7f1cd1-d5f0-4cd5-8e0f-b5931f5d0025",
+      "name": "List all tables in a database",
+      "credentials": {
+        "postgres": {
+          "id": "ueNKVcBlzEaRAi1I",
+          "name": "Postgres account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "ce46d81e-fe38-4c00-a1bf-c03a231e2505",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        40,
+        260
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Convert data to Json": {
+      "main": [
+        [
+          {
+            "node": "Save file locally",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add table name to output": {
+      "main": [
+        [
+          {
+            "node": "Convert data to Json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schema Extractor": {
+      "main": [
+        [
+          {
+            "node": "Add table name to output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List all tables in a database": {
+      "main": [
+        [
+          {
+            "node": "Schema Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "List all tables in a database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "55fa91c3-9e70-4d70-aae5-74acfe424556",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1fc85153dfc4ea22a8172f0d7347fa9f591f71e2064dc331f7bdc1d7ee422e7a"
+  },
+  "id": "jiJrnYg9UN6vmMKV",
+  "tags": [
+    {
+      "createdAt": "2025-02-25T10:55:04.069Z",
+      "updatedAt": "2025-02-25T10:55:04.069Z",
+      "id": "KUfSxWPdWLM64AbD",
+      "name": "嵌套方法实现chat内加图标"
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "lastValidatedTimestamp": 1740045584483,
+  "projects": {
+    "C:\\D\\n8n-master": {
+      "name": "n8n-monorepo",
+      "version": "1.79.0"
+    },
+    "C:\\D\\n8n-master\\cypress": {
+      "name": "n8n-cypress"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\api-types": {
+      "name": "@n8n/api-types",
+      "version": "0.15.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\benchmark": {
+      "name": "@n8n/n8n-benchmark",
+      "version": "1.11.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\chat": {
+      "name": "@n8n/chat",
+      "version": "0.34.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\client-oauth2": {
+      "name": "@n8n/client-oauth2",
+      "version": "0.22.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\codemirror-lang": {
+      "name": "@n8n/codemirror-lang",
+      "version": "0.3.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\config": {
+      "name": "@n8n/config",
+      "version": "1.29.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\di": {
+      "name": "@n8n/di",
+      "version": "0.3.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\imap": {
+      "name": "@n8n/imap",
+      "version": "0.8.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\json-schema-to-zod": {
+      "name": "@n8n/json-schema-to-zod",
+      "version": "1.2.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\nodes-langchain": {
+      "name": "@n8n/n8n-nodes-langchain",
+      "version": "1.79.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\permissions": {
+      "name": "@n8n/permissions",
+      "version": "0.17.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\storybook": {
+      "name": "@n8n/storybook",
+      "version": "0.0.1"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n\\task-runner": {
+      "name": "@n8n/task-runner",
+      "version": "1.17.0"
+    },
+    "C:\\D\\n8n-master\\packages\\@n8n_io\\eslint-config": {
+      "name": "@n8n_io/eslint-config",
+      "version": "0.0.1"
+    },
+    "C:\\D\\n8n-master\\packages\\cli": {
+      "name": "n8n",
+      "version": "1.79.0"
+    },
+    "C:\\D\\n8n-master\\packages\\core": {
+      "name": "n8n-core",
+      "version": "1.79.0"
+    },
+    "C:\\D\\n8n-master\\packages\\design-system": {
+      "name": "n8n-design-system",
+      "version": "1.68.0"
+    },
+    "C:\\D\\n8n-master\\packages\\editor-ui": {
+      "name": "n8n-editor-ui",
+      "version": "1.79.0"
+    },
+    "C:\\D\\n8n-master\\packages\\frontend\\@n8n\\composables": {
+      "name": "@n8n/composables",
+      "version": "1.1.0"
+    },
+    "C:\\D\\n8n-master\\packages\\frontend\\tooling\\eslint-config": {
+      "name": "@n8n/frontend-eslint-config",
+      "version": "1.1.0"
+    },
+    "C:\\D\\n8n-master\\packages\\frontend\\tooling\\typescript-config": {
+      "name": "@n8n/frontend-typescript-config",
+      "version": "1.1.0"
+    },
+    "C:\\D\\n8n-master\\packages\\frontend\\tooling\\vitest-config": {
+      "name": "@n8n/frontend-vitest-config",
+      "version": "1.1.0"
+    },
+    "C:\\D\\n8n-master\\packages\\node-dev": {
+      "name": "n8n-node-dev",
+      "version": "1.79.0"
+    },
+    "C:\\D\\n8n-master\\packages\\nodes-base": {
+      "name": "n8n-nodes-base",
+      "version": "1.79.0"
+    },
+    "C:\\D\\n8n-master\\packages\\workflow": {
+      "name": "n8n-workflow",
+      "version": "1.78.0"
+    }
+  },
+  "pnpmfileExists": false,
+  "settings": {
+    "autoInstallPeers": true,
+    "catalogs": {
+      "default": {
+        "@sentry/node": "8.52.1",
+        "@types/basic-auth": "^1.1.3",
+        "@types/express": "^4.17.21",
+        "@types/lodash": "^4.14.195",
+        "@types/uuid": "^10.0.0",
+        "@types/xml2js": "^0.4.14",
+        "axios": "1.7.4",
+        "basic-auth": "2.0.1",
+        "callsites": "3.1.0",
+        "chokidar": "4.0.1",
+        "fast-glob": "3.2.12",
+        "flatted": "3.2.7",
+        "form-data": "4.0.0",
+        "iconv-lite": "0.6.3",
+        "lodash": "4.17.21",
+        "luxon": "3.4.4",
+        "nanoid": "3.3.8",
+        "picocolors": "1.0.1",
+        "reflect-metadata": "0.2.2",
+        "uuid": "10.0.0",
+        "xml2js": "0.6.2",
+        "xss": "1.0.15",
+        "zod": "3.24.1",
+        "@langchain/core": "0.3.30"
+      },
+      "frontend": {
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/user-event": "^14.6.0",
+        "@testing-library/vue": "^8.1.0",
+        "@vue/tsconfig": "^0.7.0",
+        "@vueuse/core": "^10.11.0",
+        "@vitest/coverage-v8": "^3.0.5",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@sentry/vue": "^8.33.1",
+        "tsup": "^8.3.6",
+        "typescript": "^5.6.2",
+        "vite": "^6.0.2",
+        "vite-plugin-dts": "^4.3.0",
+        "vitest": "^3.0.5",
+        "vitest-mock-extended": "^2.0.2",
+        "vue": "^3.5.13",
+        "vue-router": "^4.5.0",
+        "vue-tsc": "^2.1.10",
+        "vue-markdown-render": "^2.2.1",
+        "highlight.js": "^11.8.0"
+      }
+    },
+    "dedupeDirectDeps": false,
+    "dedupeInjectedDeps": true,
+    "dedupePeerDependents": true,
+    "dev": true,
+    "excludeLinksFromLockfile": false,
+    "hoistPattern": [
+      "*"
+    ],
+    "hoistWorkspacePackages": false,
+    "injectWorkspacePackages": false,
+    "linkWorkspacePackages": "deep",
+    "nodeLinker": "isolated",
+    "optional": true,
+    "preferWorkspacePackages": true,
+    "production": true,
+    "publicHoistPattern": [
+      "*"
+    ],
+    "workspacePackagePatterns": [
+      "packages/*",
+      "packages/@n8n/*",
+      "packages/@n8n_io/*",
+      "packages/frontend/**",
+      "cypress"
+    ]
+  },
+  "filteredInstall": true
+}

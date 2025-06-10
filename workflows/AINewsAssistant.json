@@ -1,0 +1,410 @@
+{
+  "name": "AI 新闻助手",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "def5e254-bbb5-41c9-ae87-b74f3f049735",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1540,
+        640
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "触发频率 这里设置为每天早上8点\n",
+        "height": 260,
+        "width": 185,
+        "color": 6
+      },
+      "id": "374ee3d1-0bcb-4cd2-b036-52b6ac157ffa",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -200,
+        540
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "e3dfd170-1a26-4a8f-b973-62aa20aa3b60",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -160,
+        640
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "从免费的 Gnew API得到AI 新闻",
+        "height": 260,
+        "width": 205,
+        "color": 5
+      },
+      "id": "c0a4d5d4-4178-47fd-905b-cdda6a2b2301",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        80,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# 自动总结AI新闻并发送到telegram",
+        "height": 80,
+        "width": 580
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        300
+      ],
+      "id": "d467a508-bb60-46d2-8be4-aa8e3c930c3f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "LLM考虑所有信息生成telegram的详细报告",
+        "height": 527,
+        "width": 325,
+        "color": 4
+      },
+      "id": "70b3f275-9cdd-443b-9497-2a765ba065cb",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        860,
+        540
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chatId": "YourChatID",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        640
+      ],
+      "id": "2028be0f-bc97-4ee8-9add-0b18ae49c325",
+      "name": "Telegram",
+      "webhookId": "91b2ca37-1c54-438f-8be0-c4ca9e1c1f93",
+      "credentials": {
+        "telegramApi": {
+          "id": "7psRuMWwicqjdCnj",
+          "name": "Ai Asistant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Send News to telegram\n",
+        "height": 271,
+        "width": 246,
+        "color": 6
+      },
+      "id": "0c137e4f-7af9-41c4-a029-cf414fa03ac0",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1220,
+        560
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c3090c5-8c3d-40af-8a94-a4297f0b4920",
+              "name": "articles",
+              "value": "={{ $json.articles }}",
+              "type": "string"
+            },
+            {
+              "id": "9bcb977f-4813-461c-856e-4a05e5f89c99",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        500
+      ],
+      "id": "19f44a3d-e1c9-4cf1-8c79-c15c1f721e88",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://gnews.io/api/v4/search?q=AI& lang=en&apikey=YourToken",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        140,
+        500
+      ],
+      "id": "dad11457-8f87-42de-877d-8fa45dcc0706",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "从免费的 Gnew API得到AI 新闻",
+        "height": 260,
+        "width": 205,
+        "color": 5
+      },
+      "id": "cc8b9233-0b0b-49b3-8616-d50a610ceb14",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        80,
+        760
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c3090c5-8c3d-40af-8a94-a4297f0b4920",
+              "name": "articles",
+              "value": "={{ $json.articles }}",
+              "type": "string"
+            },
+            {
+              "id": "9bcb977f-4813-461c-856e-4a05e5f89c99",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        840
+      ],
+      "id": "5e25fed3-20c0-4ae0-b86d-479caa5238c8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything?q=AI&sortBy=publishedAt&apiKey=YourToken",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        140,
+        840
+      ],
+      "id": "8490d272-f4fd-4a08-9ed7-135cdddbc61c",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        620,
+        640
+      ],
+      "id": "5ec20759-6d13-4443-83a7-5daa5e7b1d10",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=你是一个由AI新闻助手。你的任务是\n1. 只提取{{ $json.articles }}中的关于AI技术进展和应用的15条新闻。其他的不要。\n2. 翻译为准确的中文，注意，有些技术词汇如果大家都用英文可以不翻译为中文。\n3. 确保包含每个新闻的url\n4. 确保在输出的第一句提及今天的日期，例如：早上好，这是2025年10月10号的AI新闻\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        900,
+        640
+      ],
+      "id": "cc9b100b-8d09-432e-b8cd-9d959f5782c7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-thinking-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        900,
+        880
+      ],
+      "id": "36baf84d-fc51-4b16-b85c-2fcd20dcd375",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4QExgABYotQvsU4s",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "4adcd842-1eeb-459e-8e50-75eec4806f57",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f638a47e4e563f91fde8b98ed9f5fa6a9faa41a207143e9ce05d85200c905524"
+  },
+  "id": "057ipQLohQqtxeX5",
+  "tags": [
+    {
+      "createdAt": "2025-01-26T15:22:52.143Z",
+      "updatedAt": "2025-01-26T15:22:52.143Z",
+      "id": "dNuSmJmhSOBNp9lV",
+      "name": "Social Media"
+    }
+  ]
+}
