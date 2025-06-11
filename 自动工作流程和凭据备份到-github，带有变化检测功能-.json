@@ -1,0 +1,769 @@
+{
+  "createdAt": "2025-06-06T09:46:57.460Z",
+  "updatedAt": "2025-06-10T16:40:59.000Z",
+  "id": "d1ZksqyzK4tBsfZw",
+  "name": "自动工作流程和凭据备份到 GitHub，带有变化检测功能",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "0e2ba4cf-e788-44a5-85c2-af3f4d54001c",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        400,
+        420
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "U7Jh9njKLEjGLVIl",
+          "cachedResultName": "n8n Backup Changes"
+        },
+        "workflowInputs": {
+          "value": {
+            "filePath": "={{ $('Set Workflow Path').item.json.filePath }}"
+          },
+          "schema": [
+            {
+              "id": "filePath",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "filePath",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "filePath"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "id": "ba8bb601-c525-46d2-ab90-6e013f4c993f",
+      "name": "Get New Workflow Hash",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "position": [
+        1280,
+        320
+      ],
+      "typeVersion": 1.2,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1YXw5LjjDeywGBK9",
+          "mode": "list",
+          "cachedResultName": "邮件图谱知识库"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "id": "65540e8a-05a2-40d2-9c75-cee464ba0cf0",
+      "name": "Get Old Workflow Hash",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "position": [
+        840,
+        320
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $('Set Workflow Path').item.json.filePath }}",
+        "options": {}
+      },
+      "id": "04f7544b-d1e6-41e9-9f2e-dac565a26d2f",
+      "name": "Read Workflow Data",
+      "type": "n8n-nodes-base.readWriteFile",
+      "position": [
+        1720,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c60cce2a-609d-417e-a73c-9719a490cc85",
+              "name": "filePath",
+              "type": "string",
+              "value": "/data/shared/WorkFlowBackup.json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "541b78e7-f1f6-4740-a86b-4fe2274d02f0",
+      "name": "Set Workflow Path",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        620,
+        320
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "command": "=n8n export:workflow --all --output={{ $('Set Workflow Path').item.json.filePath }}"
+      },
+      "id": "4b542860-3e2f-4901-b395-02407d799010",
+      "name": "Execute Workflow Backup",
+      "type": "n8n-nodes-base.executeCommand",
+      "position": [
+        1060,
+        320
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.filePath }}",
+        "options": {}
+      },
+      "id": "0cbc759b-c34b-4216-adec-3d8a5b672ba8",
+      "name": "Read File",
+      "type": "n8n-nodes-base.readWriteFile",
+      "position": [
+        620,
+        60
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "38572f12-e887-462c-8270-3e9853ddaf6f",
+      "name": "Extract Data",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        840,
+        60
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{$json.data}}",
+        "dataPropertyName": "hash"
+      },
+      "id": "e6b58c23-765a-4e10-98f6-51a8bf33fd86",
+      "name": "Hash Data",
+      "type": "n8n-nodes-base.crypto",
+      "position": [
+        1160,
+        20
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "filePath"
+            }
+          ]
+        }
+      },
+      "id": "3705a10f-62d9-4514-9cbb-9d4a3cdfb3f6",
+      "name": "Hash Maker",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        400,
+        60
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "d7bd9e64-e2a0-4062-a9fc-b83f1d57e1fc",
+      "name": "Extract Workflow Data",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        1940,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "anbeime",
+          "mode": "list",
+          "cachedResultName": "anbeime",
+          "cachedResultUrl": "https://github.com/anbeime"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflows",
+          "mode": "list",
+          "cachedResultName": "n8n-workflows",
+          "cachedResultUrl": "https://github.com/anbeime/n8n-workflows"
+        },
+        "filePath": "={{ \"backups/WorkFlow Backup \" + new Date($now).toISOString().replace('T', ' ').slice(0, 16) + \".json\" }}",
+        "fileContent": "={{ $json.data }}",
+        "commitMessage": "={{ \"WorkFlow Backup \" + new Date($now).toISOString().replace('T', ' ').slice(0, 16) }}"
+      },
+      "id": "0d80daba-f5f1-4923-aed0-44cc71d6f6ed",
+      "name": "GitHub Workflow Backup",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        2160,
+        320
+      ],
+      "webhookId": "ccf2ad35-62aa-4e3e-9811-ea6d7fca0aba",
+      "typeVersion": 1.1,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "U7Jh9njKLEjGLVIl",
+          "cachedResultName": "n8n Backup Changes"
+        },
+        "workflowInputs": {
+          "value": {
+            "filePath": "={{ $('Set Credential Path').item.json.filePath }}"
+          },
+          "schema": [
+            {
+              "id": "filePath",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "filePath",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "filePath"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "id": "acda5636-a250-4312-9b68-42d84ba985b1",
+      "name": "Get New Credential Hash",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "position": [
+        1280,
+        520
+      ],
+      "typeVersion": 1.2,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "U7Jh9njKLEjGLVIl",
+          "cachedResultName": "n8n Backup Changes"
+        },
+        "workflowInputs": {
+          "value": {
+            "filePath": "={{ $('Set Credential Path').item.json.filePath }}"
+          },
+          "schema": [
+            {
+              "id": "filePath",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "filePath",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "filePath"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "id": "5de8ed53-7552-409f-aafc-edc498e5ccfb",
+      "name": "Get Old Credential Hash",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "position": [
+        840,
+        520
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $('Set Credential Path').item.json.filePath }}",
+        "options": {}
+      },
+      "id": "6527b7ae-82e5-4b25-95e7-49671a3a8a6d",
+      "name": "Read Credential Data",
+      "type": "n8n-nodes-base.readWriteFile",
+      "position": [
+        1720,
+        520
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c60cce2a-609d-417e-a73c-9719a490cc85",
+              "name": "filePath",
+              "type": "string",
+              "value": "/data/shared/CredentialBackup.json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5873d5bd-b96e-4b9b-a193-e49cc3f4e2a7",
+      "name": "Set Credential Path",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        620,
+        520
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "command": "=n8n export:credentials --all --output={{ $('Set Credential Path').item.json.filePath }}"
+      },
+      "id": "d643bbac-ae7d-47ae-8df7-c63ee9939206",
+      "name": "Execute Credential Backup",
+      "type": "n8n-nodes-base.executeCommand",
+      "position": [
+        1060,
+        520
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "cd2f5342-8c32-4ebb-af1a-46a53e721756",
+      "name": "Extract Credential Data",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        1940,
+        520
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "anbeime",
+          "mode": "list",
+          "cachedResultName": "anbeime",
+          "cachedResultUrl": "https://github.com/anbeime"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflows",
+          "mode": "list",
+          "cachedResultName": "n8n-workflows",
+          "cachedResultUrl": "https://github.com/anbeime/n8n-workflows"
+        },
+        "filePath": "={{ \"backups/ Credential Backup \" + new Date($now).toISOString().replace('T', ' ').slice(0, 16) + \".json\" }}",
+        "fileContent": "={{ $json.data }}",
+        "commitMessage": "={{ \" Credential Backup \" + new Date($today).toISOString().replace('T', ' ').slice(0, 16) }}"
+      },
+      "id": "afb6b30a-d790-4374-9bdf-436305085582",
+      "name": "GitHub Credential Backup",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        2160,
+        520
+      ],
+      "webhookId": "ccf2ad35-62aa-4e3e-9811-ea6d7fca0aba",
+      "typeVersion": 1.1,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c028ce1d-3fe9-4dc9-a3e9-296460e12c83",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              },
+              "leftValue": "={{ $('Get New Workflow Hash').item.json.hash }}",
+              "rightValue": "={{ $('Get Old Workflow Hash').item.json.hash }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4fa2e76d-75d8-4881-83b3-d8e40f370f79",
+      "name": "If Workflow Updated",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1500,
+        320
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c028ce1d-3fe9-4dc9-a3e9-296460e12c83",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              },
+              "leftValue": "={{ $('Get New Credential Hash').item.json.hash }}",
+              "rightValue": "={{ $('Get Old Credential Hash').item.json.hash }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5b4c8144-da0e-4994-92c6-0eab90ef864b",
+      "name": "If Credential Updated",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1500,
+        520
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "content": "This n8n workflow template uses community nodes and is only compatible with the self-hosted version of n8n.\n此 n8n 工作流模板使用社区节点，并且仅与 n8n 的自托管版本兼容。\n\nTitle: n8n Credentials and Workflows Backup on Change Detection\n标题： n8n 凭证和工作流更改检测备份\n\nPurpose:  目的：\nNever lose track of your n8n changes again! This workflow smartly backs up all your workflows and credentials, automatically detects any changes using hash comparison, and pushes updates to GitHub—but only when something has actually changed. Set your own interval and stop cluttering your repo with redundant commits.\n再也不会忘记您的 n8n 更改！此工作流程会智能地备份您的所有工作流程和凭据，使用哈希比较自动检测任何更改，并将更新推送到 GitHub，但前提是某些内容确实发生了变化。设置您自己的间隔，停止用冗余提交弄乱您的存储库。\n\nimage.png\n\nTrigger:  触发：\n\nSchedule Trigger: Executes the entire process at a user-defined interval. No need to worry about traceability or managing countless backups, as the workflow only commits changes when a difference is detected.\n计划触发器 ：按用户定义的时间间隔执行整个过程。无需担心可追溯性或管理无数备份，因为工作流仅在检测到差异时提交更改。\nimage.png\n\nWorkflow Backup Process:  工作流备份过程：\n\nSet Workflow Path: Defines the local backup file path for workflows.\n设置工作流路径 ：定义工作流的本地备份文件路径。\n\nGet Old Workflow Hash: Executes a helper workflow to retrieve the previous hash.\n获取旧工作流哈希 ：执行帮助程序工作流以检索以前的哈希。\n\nExecute Workflow Backup: Runs n8n export:workflow to export all workflows to the defined file path.\n执行工作流备份 ：运行 n8n export：workflow 将所有工作流导出到定义的文件路径。\n\nGet New Workflow Hash: Executes a helper workflow to generate the new hash from the exported file.\n获取新工作流哈希： 执行帮助程序工作流以从导出的文件生成新哈希。\n\nCompare Hashes (If Workflow Updated): Checks if the new hash differs from the old one.\n比较哈希值（如果工作流已更新）： 检查新哈希值是否与旧值不同。\n\nIf Updated:  如果已更新：\n\nRead Workflow Data → Extract Text → Push to GitHub: Reads, extracts, and commits the updated workflow JSON to GitHub under a timestamped filename.\n读取工作流数据 →提取文本 → 推送到 GitHub：读取、提取更新的工作流 JSON 并将其提交到 GitHub，文件名带有时间戳。\nCredential Backup Process:\n凭证备份过程：\n\nSet Credential Path: Defines the local backup file path for credentials.\n设置凭证路径 ：定义凭证的本地备份文件路径。\n\nGet Old Credential Hash: Executes a helper workflow to retrieve the previous hash.\n获取旧凭证哈希 ：执行帮助程序工作流以检索以前的哈希。\n\nExecute Credential Backup: Runs n8n export:credentials to export all credentials.\n执行凭证备份 ：运行 n8n export：credentials 以导出所有凭证。\n\nGet New Credential Hash: Executes a helper workflow to generate the new hash from the exported file.\n获取新凭证哈希 ：执行帮助程序工作流以从导出的文件生成新哈希。\n\nCompare Hashes (If Credential Updated): Checks for changes.\n比较哈希值（如果凭证已更新）： 检查更改。\n\nIf Updated:  如果已更新：\n\nRead Credential Data → Extract Text → Push to GitHub: Commits the new credentials JSON to GitHub if changes are found.\n读取凭据数据 → 提取文本 → 推送到 GitHub：如果发现更改，则将新凭据 JSON 提交到 GitHub。\nHash Generator (Helper Flow):\n哈希生成器 （Helper Flow）：\nUsed in both workflow and credential backup paths:\n在工作流和凭证备份路径中使用：\n\nRead File → Extract Text → Hash Data\n读取文件 → 提取文本 → 哈希数据\nOutputs SHA-256 hash used for comparison\n输出用于比较的 SHA-256 哈希\nGitHub Integration:  GitHub 集成：\n\nCommits are created with ISO timestamp in the filename and message.\n提交是在文件名和消息中使用 ISO 时间戳创建的。\nRepository: https://github.com/your-github-name/n8n-onchange-bachup  存储 库： https://github.com/your-github-name/n8n-onchange-bachup\nFile paths: backups/WorkFlow Backup -timestamp-.json and backups/Credential Backup -timestamp-.json\n文件路径： backups/WorkFlow Backup -timestamp-.json 和 backups/Credential Backup -timestamp-.json\nChange Detection Logic:  变化检测逻辑：\n\nOnly commits files when hash changes are detected (i.e., actual content change).\n仅在检测到哈希更改（即实际内容更改）时提交文件。\nAvoids unnecessary GitHub commits and storage use.\n避免不必要的 GitHub 提交和存储使用。\nError Handling:  错误处理：\n\nGitHub nodes are set to continue workflow execution on error, avoiding full process interruption.\nGitHub 节点设置为出错时继续执行工作流，避免整个流程中断。",
+        "height": 580,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        220
+      ],
+      "id": "55c3d231-43fd-428d-8b02-70cab6879b2a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "id": "98a95b73-c9bf-4ea0-b316-5bf38611a6e8",
+      "name": "Retrieve workflows",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        1260,
+        120
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "n8nApi": {
+          "id": "9QfKtcQxqw5WhNrF",
+          "name": "n8n account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Read File": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hash Maker": {
+      "main": [
+        [
+          {
+            "node": "Read File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Data": {
+      "main": [
+        [
+          {
+            "node": "Retrieve workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Workflow Path",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Credential Path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Workflow Path": {
+      "main": [
+        [
+          {
+            "node": "Get Old Workflow Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Workflow Data": {
+      "main": [
+        [
+          {
+            "node": "Extract Workflow Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Workflow Updated": {
+      "main": [
+        [
+          {
+            "node": "Read Workflow Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Credential Path": {
+      "main": [
+        [
+          {
+            "node": "Get Old Credential Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Credential Data": {
+      "main": [
+        [
+          {
+            "node": "Extract Credential Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Workflow Data": {
+      "main": [
+        [
+          {
+            "node": "GitHub Workflow Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get New Workflow Hash": {
+      "main": [
+        [
+          {
+            "node": "If Workflow Updated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Old Workflow Hash": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Credential Updated": {
+      "main": [
+        [
+          {
+            "node": "Read Credential Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Backup": {
+      "main": [
+        [
+          {
+            "node": "Get New Workflow Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Credential Data": {
+      "main": [
+        [
+          {
+            "node": "GitHub Credential Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get New Credential Hash": {
+      "main": [
+        [
+          {
+            "node": "If Credential Updated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Old Credential Hash": {
+      "main": [
+        [
+          {
+            "node": "Execute Credential Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Credential Backup": {
+      "main": [
+        [
+          {
+            "node": "Get New Credential Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "ff608daf-ec32-49b6-806a-119df5bf7359",
+  "triggerCount": 0,
+  "tags": []
+}
