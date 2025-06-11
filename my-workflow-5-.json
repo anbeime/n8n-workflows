@@ -1,0 +1,151 @@
+{
+  "createdAt": "2025-06-10T12:07:04.835Z",
+  "updatedAt": "2025-06-10T12:07:04.835Z",
+  "id": "QOTu0x7vsEAfN2gi",
+  "name": "My workflow 5",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e9a97dd5-f1e7-4d5b-a6f1-be5f0c9eb96c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "8d57ced5-5137-48d8-88d5-faef10777f19",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        40,
+        120
+      ],
+      "webhookId": "e9a97dd5-f1e7-4d5b-a6f1-be5f0c9eb96c",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.content }}",
+        "options": {}
+      },
+      "id": "2c644461-10e9-4b1d-8811-1a899bd84bc8",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        480,
+        120
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## N8N en OpenAI image analyser",
+        "height": 300,
+        "width": 620
+      },
+      "id": "61ecab4f-4736-4b17-ad08-e745be03beec",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## AI prompt\nYou are an expert financial analyst tasked with providing an advanced technical analyses of a stock or crypto currency chart provided. Your analysis will be based on various technical indicators and will provide simple insights for novice traders. Just explain to traders were you expect the market is moving. Also warn them this is not a binding advice. Make sure to explain everything in infant language.",
+        "height": 340,
+        "color": 5
+      },
+      "id": "c38d80db-423d-467f-a037-a011119ccba9",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        180,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": "mistralai/mistral-small-24b-instruct-2501:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        200,
+        160
+      ],
+      "id": "e43cde5f-e335-47a4-9474-cab173fdf1aa",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "r7KVJUV9mVgdFFSu",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        180,
+        -20
+      ],
+      "id": "67245961-1613-42e0-9c9d-ecf82cf6ece8",
+      "name": "AI Agent"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "fd203bea-46b0-48fd-a8d6-5f37934ae210",
+  "triggerCount": 0,
+  "tags": []
+}
