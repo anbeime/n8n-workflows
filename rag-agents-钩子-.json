@@ -1,0 +1,77 @@
+{
+  "createdAt": "2025-06-09T14:24:45.867Z",
+  "updatedAt": "2025-06-09T14:33:56.000Z",
+  "id": "G3tpfwkkTTdqDqv5",
+  "name": "RAG Agents 钩子",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "367ad5a8-f0f7-4556-b6d7-bf76d6bedf84",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        660,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n-pivlsjcp.us-east-1.clawcloudrun.com/webhook/add_doc_to_vector_db",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json.query.query }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7d12e992-2949-433d-806d-dc3baf6ed08a",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        400
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "8tg38T0n27NX644p",
+          "name": "Header Auth account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "656379a7-d23e-470a-b1bd-7dd2a750e0c1",
+  "triggerCount": 0,
+  "tags": []
+}
