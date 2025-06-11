@@ -1,0 +1,868 @@
+{
+  "createdAt": "2025-06-07T08:41:44.996Z",
+  "updatedAt": "2025-06-08T13:32:22.000Z",
+  "id": "Zixn8xMAiiu0d6Ua",
+  "name": "Github MCP server",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "operation"
+            },
+            {
+              "name": "repo"
+            },
+            {
+              "name": "issueNumber"
+            },
+            {
+              "name": "text"
+            }
+          ]
+        }
+      },
+      "id": "6ed934a9-9692-4247-b75b-a2001888879a",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -180,
+        220
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "81b134bc-d671-4493-b3ad-8df9be3f49a6",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "getLatestIssues"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "getLatestIssues"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "8d57914f-6587-4fb3-88e0-aa1de6ba56c1",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "getIssueComments"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "getIssueComments"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "7c38f238-213a-46ec-aefe-22e0bcb8dffc",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "addIssueComment"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "addIssueComment"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4532edec-49b8-4646-9d3f-e70fcb8f74a6",
+      "name": "Operation",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        0,
+        220
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "content": "## 1. Set up an MCP Server Trigger\n[Read more about the MCP Server Trigger](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger)",
+        "height": 660,
+        "width": 680,
+        "color": 7
+      },
+      "id": "295fa0cd-c56d-4b63-b843-76f99058a113",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -980,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 2. Build Simple Support Tools with Github Node\n[Read more about the Github Node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.github)\n\nWhilst it may be easier to just let the Agent provide the full raw SQL statement,\nit may expose you or your organisation to a real security risk where in the worst\ncase, data may be unknowingly leaked or deleted.\n\nForcing the agent to provide only the parameters of the query\nmeans we can guard somewhat against this risk and also allows\nuse of query parameters as best practice against SQL injection attacks.\n",
+        "height": 380,
+        "width": 560,
+        "color": 7
+      },
+      "id": "69926703-e4d5-4b95-ab3d-7bd713098e3a",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -280,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Always Authenticate Your Server!\nBefore going to production, it's always advised to enable authentication on your MCP server trigger.",
+        "height": 100,
+        "width": 380,
+        "color": 5
+      },
+      "id": "5b3697b5-c3e1-47c0-8f96-f6b39f60cbe9",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -980,
+        -280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "path": "61848df7-3619-4ccf-831b-d6408e0d6519"
+      },
+      "id": "dab92b6d-4328-49ff-b4e7-4f3177ab2e89",
+      "name": "Github MCP Server",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "position": [
+        -820,
+        20
+      ],
+      "webhookId": "61848df7-3619-4ccf-831b-d6408e0d6519",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "getLatestIssues",
+        "description": "Retrieves the latest issues from the github respository.",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $workflow.id }}"
+        },
+        "workflowInputs": {
+          "value": {
+            "repo": "n8n-io/n8n",
+            "text": "null",
+            "operation": "getLatestIssues",
+            "issueNumber": "null"
+          },
+          "schema": [
+            {
+              "id": "operation",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "operation",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "repo",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "repo",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issueNumber",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "issueNumber",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "text",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "text",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "30ebcaa9-a068-48bc-84c0-dd7ffe642f94",
+      "name": "Get Latest Issues",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        -820,
+        260
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "name": "addIssueComment",
+        "description": "Call this tool to add a comment to the github issue.",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $workflow.id }}"
+        },
+        "workflowInputs": {
+          "value": {
+            "repo": "n8n-io/n8n",
+            "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('text', ``, 'string') }}",
+            "operation": "addIssueComment",
+            "issueNumber": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('issueNumber', ``, 'string') }}"
+          },
+          "schema": [
+            {
+              "id": "operation",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "operation",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "repo",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "repo",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issueNumber",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "issueNumber",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "text",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "text",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "f485147b-b491-40d1-991b-83891c650b57",
+      "name": "Add Issue Comment",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        -500,
+        260
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d5eb037-7e52-4595-a2da-bb183674ea2a",
+              "name": "issue_number",
+              "type": "number",
+              "value": "={{ $json.number }}"
+            },
+            {
+              "id": "3d365039-f012-444c-a383-c6c70fb93e9d",
+              "name": "title",
+              "type": "string",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "id": "20a1b658-c56c-4578-9b1f-350b454da2d2",
+              "name": "url",
+              "type": "string",
+              "value": "={{ $json.url }}"
+            },
+            {
+              "id": "0eb6930d-2ea9-4a83-bab7-5f673e79c1d1",
+              "name": "reported_by",
+              "type": "string",
+              "value": "={{ $json.user.login }}"
+            },
+            {
+              "id": "2d71c6de-ab54-4721-9e1c-5193350a5110",
+              "name": "state",
+              "type": "string",
+              "value": "={{ $json.state }}"
+            },
+            {
+              "id": "474166aa-4bfa-4230-bce4-28df2de47bed",
+              "name": "created_at",
+              "type": "string",
+              "value": "={{ $json.created_at }}"
+            },
+            {
+              "id": "e4784fc1-4438-4d7a-a2f5-86be077ae7ae",
+              "name": "updated_at",
+              "type": "string",
+              "value": "={{ $json.updated_at }}"
+            },
+            {
+              "id": "e0639b60-4a08-406a-be8e-c3565a519f0c",
+              "name": "body",
+              "type": "string",
+              "value": "={{ $json.body }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "83fba2f5-aa8e-4d6c-a1f2-13232272476e",
+      "name": "Simplify Issues",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        520,
+        40
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "response",
+        "options": {}
+      },
+      "id": "6175c7d3-1a07-494a-9eab-8a5c3fc79e00",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        700,
+        40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "getIssueComments",
+        "description": "Retrieves the issue and associated comments and discussion",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $workflow.id }}"
+        },
+        "workflowInputs": {
+          "value": {
+            "repo": "n8n-io/n8n",
+            "text": "null",
+            "operation": "getIssueComments",
+            "issueNumber": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('issueNumber', ``, 'string') }}"
+          },
+          "schema": [
+            {
+              "id": "operation",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "operation",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "repo",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "repo",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issueNumber",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "issueNumber",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "text",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "text",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "8e00da29-714b-44f7-8971-2460e90ecffa",
+      "name": "Get Issue Comments",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        -660,
+        320
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.comments_url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "options": {}
+      },
+      "id": "eb21c55b-6fba-42b8-88fb-bd7096ebd3ed",
+      "name": "Get Comments",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        520,
+        220
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6e09ed44-a72c-4915-84f4-0796b45158a7",
+              "name": "id",
+              "type": "number",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "id": "76c34251-7f40-42bc-bb98-17e7fe52d9ed",
+              "name": "issue_url",
+              "type": "string",
+              "value": "={{ $json.issue_url }}"
+            },
+            {
+              "id": "1094dd36-d18d-4ada-ac49-5347f0f245ae",
+              "name": "user",
+              "type": "string",
+              "value": "={{ $json.user.login }}"
+            },
+            {
+              "id": "59b50536-4e0a-46bc-919b-685066253f45",
+              "name": "author_association",
+              "type": "string",
+              "value": "={{ $json.author_association }}"
+            },
+            {
+              "id": "6253bae9-aaff-4a88-9e5a-64126ed80cc4",
+              "name": "body",
+              "type": "string",
+              "value": "={{ $json.body }}"
+            },
+            {
+              "id": "3944598d-8204-45a0-9e0b-448d3cfa5a87",
+              "name": "created_at",
+              "type": "string",
+              "value": "={{ $json.created_at }}"
+            },
+            {
+              "id": "3f395b51-6e57-4d07-9cf9-9a03e7a40c51",
+              "name": "updated_at",
+              "type": "string",
+              "value": "={{ $json.updated_at }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7640de06-2813-45f8-8b77-57e2b7c4d7a0",
+      "name": "Simplify Comments",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        700,
+        220
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "response",
+        "options": {}
+      },
+      "id": "a2ad9620-e624-4b24-b0d4-77fabf223a3d",
+      "name": "Aggregate Comments",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        880,
+        220
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "repository",
+        "owner": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.repo.split('/')[0] }}"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.repo.split('/')[1] }}"
+        },
+        "limit": 10,
+        "getRepositoryIssuesFilters": {
+          "sort": "created"
+        }
+      },
+      "id": "d8b2db04-5b23-4d2e-b8ab-2e6456e2a1b9",
+      "name": "Get Many Issues",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        340,
+        40
+      ],
+      "webhookId": "e08dcf3e-66bb-4ba5-a868-d8c41a98bc95",
+      "typeVersion": 1.1,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.repo.split('/')[0] }}"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.repo.split('/')[1] }}"
+        },
+        "issueNumber": "={{ $json.issueNumber }}"
+      },
+      "id": "e991bfaa-7383-4c16-9543-3ed988e43744",
+      "name": "Get Single Issue",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        340,
+        220
+      ],
+      "webhookId": "e08dcf3e-66bb-4ba5-a868-d8c41a98bc95",
+      "typeVersion": 1.1,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "createComment",
+        "owner": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.repo.split('/')[0] }}"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.repo.split('/')[1] }}"
+        },
+        "issueNumber": "={{ $json.issueNumber }}",
+        "body": "={{ $json.text }}"
+      },
+      "id": "1e5fe63d-04a3-4bb3-9084-4be0a1758bbf",
+      "name": "Create Comment",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        340,
+        400
+      ],
+      "webhookId": "e08dcf3e-66bb-4ba5-a868-d8c41a98bc95",
+      "typeVersion": 1.1,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65631bfa-7448-4188-8cc1-b812361ae9b1",
+              "name": "response",
+              "type": "string",
+              "value": "ok"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4eae666c-4303-4941-a4b1-d5968dccea05",
+      "name": "Get Response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        520,
+        400
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## Try It Out!\n### This n8n demonstrates how to build your own Github MCP server to personalise it to your organisation's repositories, issues and pull requests.\n\nThis n8n implementation, though not as fully featured as the official MCP server offered by Github, allows you to control precisely what access and/or functionality is granted to users which can make MCP use simpler and in some cases, more secure. The use-case in this template is to simply view and comment on issues within a specific repository but can be extended to meet the needs of your team.\n\nThis MCP example is based off an official MCP reference implementation which can be found here https://github.com/modelcontextprotocol/servers/tree/main/src/github\n\n### How it works\n* A MCP server trigger is used and connected to 3 custom workflow tools. We're using custom workflow tools as there is quite a few nodes required for each task.\n* Behind these tools are regular Github nodes although preconfigured with credentials and targeted repository.\n* The \"Get Issue Comments\" and \"Create Issue Comment\" tools depend on obtaining an Issue Number first. The agent should call the \"Get Latest Issues\" tool for this.\n\n### How to use\n* This Github MCP server allows any compatible MCP client to view and comment on Github Issues. You will need to have a Github account and repository access available before you can use this server.\n* Connect your MCP client by following the n8n guidelines here - https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/#integrating-with-claude-desktop\n* Try the following queries in your MCP client:\n  * \"Can you get me the latest issues about MCP?\"\n  * \"What is the current progress on Issue 12345?\"\n  * \"Please can you add a comment to Issue 12345 that they should try installing the latest version and see if that works?\"\n\n### Requirements\n* Github for account and repository access. The repository need not be your own but you'll still need to ensure you have the correct permissions.\n* MCP Client or Agent for usage such as Claude Desktop - https://claude.ai/download\n\n### Customising this workflow\n* Extend this template to interactive with pull requests or workflows within your own company's Github repositories. Alternatively,  pull in metrics and generate reports for programme managers.\n* Remember to set the MCP server to require credentials before going to production and sharing this MCP server with others!",
+        "height": 1480,
+        "width": 440
+      },
+      "id": "c2c1905c-53b4-40e2-88cf-e9beef857860",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1440,
+        -760
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Operation": {
+      "main": [
+        [
+          {
+            "node": "Get Many Issues",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Single Issue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Comments": {
+      "main": [
+        [
+          {
+            "node": "Simplify Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Comment": {
+      "main": [
+        [
+          {
+            "node": "Get Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Many Issues": {
+      "main": [
+        [
+          {
+            "node": "Simplify Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simplify Issues": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Single Issue": {
+      "main": [
+        [
+          {
+            "node": "Get Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Issue Comment": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Latest Issues": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simplify Comments": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Issue Comments": {
+      "ai_tool": [
+        [
+          {
+            "node": "Github MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "22ac5128-8a08-48b2-9914-727227e3e41c",
+  "triggerCount": 1,
+  "tags": []
+}
