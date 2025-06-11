@@ -1,0 +1,410 @@
+{
+  "createdAt": "2025-06-10T11:16:13.772Z",
+  "updatedAt": "2025-06-10T13:57:06.000Z",
+  "id": "tWTqDMf6DmafOyLF",
+  "name": "备份工作流到GITHUB",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "673d7d20-6af6-4ed7-9afc-c92d2ad9a6f3",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -540,
+        180
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "id": "dc818316-87ee-42b4-a5c4-66a1f6a00082",
+      "name": "Retrieve workflows",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        -60,
+        180
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "n8nApi": {
+          "id": "9QfKtcQxqw5WhNrF",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "name"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "66ce7f19-2523-4dbe-8a43-a2bf95cd6d19",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        -220,
+        180
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "list",
+        "owner": {
+          "__rl": true,
+          "value": "anbeime",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflows",
+          "mode": "list",
+          "cachedResultName": "n8n-workflows",
+          "cachedResultUrl": "https://github.com/anbeime/n8n-workflows"
+        },
+        "filePath": "="
+      },
+      "id": "f5e25e54-6685-4cf6-83cc-33c3b825595a",
+      "name": "List files from repo",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        -380,
+        180
+      ],
+      "webhookId": "354d699e-44b0-4444-9d31-af7fd4ff5561",
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "anbeime",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflows",
+          "mode": "list",
+          "cachedResultName": "n8n-workflows",
+          "cachedResultUrl": "https://github.com/anbeime/n8n-workflows"
+        },
+        "filePath": "={{ $('Retrieve workflows').item.json.name.replace(/\\s+/g, '-').toLowerCase() }}-{{ $('Retrieve workflows').item.json.tags[0].name }}.json",
+        "fileContent": "={{ $('To base64').item.json.data }}",
+        "commitMessage": "=backup-{{ $('Commit date & file name').item.json.commitDate }}"
+      },
+      "id": "8f02e614-e822-4fdd-9a25-9f38447300ef",
+      "name": "Update file",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        760,
+        100
+      ],
+      "webhookId": "27218087-8df7-474d-a39f-70cfa9c34ec8",
+      "typeVersion": 1,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "anbeime",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflows",
+          "mode": "list",
+          "cachedResultName": "n8n-workflows",
+          "cachedResultUrl": "https://github.com/anbeime/n8n-workflows"
+        },
+        "filePath": "={{ $('Retrieve workflows').item.json.name.replace(/\\s+/g, '-').toLowerCase() }}-{{ $('Retrieve workflows').item.json.tags[0].name }}.json",
+        "fileContent": "={{ $('To base64').item.json.data }}",
+        "commitMessage": "=backup-{{ $node['Commit date & file name'].json.commitDate }}"
+      },
+      "id": "9e912cde-9216-454b-94d9-81d61d225e9f",
+      "name": "Upload file",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        760,
+        260
+      ],
+      "webhookId": "ce4b561b-acb9-4cd8-b76f-4928dada9674",
+      "typeVersion": 1,
+      "credentials": {
+        "githubApi": {
+          "id": "2m7598Yo8wrEPAM4",
+          "name": "GitHub account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Aggregate').item.json.name }}",
+              "operation": "contains",
+              "value2": "={{ $('Retrieve workflows').item.json.name.replace(/\\s+/g, '-').toLowerCase() }}-{{ $('Retrieve workflows').item.json.tags[0].name }}.json"
+            }
+          ]
+        }
+      },
+      "id": "cf7f1478-cc30-4862-bcc3-78b995270e31",
+      "name": "Check if file exists",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        600,
+        180
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "mode": "each",
+        "options": {
+          "format": true
+        }
+      },
+      "id": "1c3345b9-d97c-4a43-9b3a-f7a7e87a4890",
+      "name": "Json file",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        120,
+        180
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "id": "883b18ea-4784-4b9a-b3f8-dea8743cd762",
+      "name": "To base64",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        280,
+        180
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Retrieve previous file names from Github",
+        "height": 380,
+        "width": 300,
+        "color": 5
+      },
+      "id": "066b9fec-768d-4549-baa7-1f164795862b",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -400,
+        40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fe4a36ef-9f04-40e3-99bd-cc517a49b440",
+              "name": "commitDate",
+              "type": "string",
+              "value": "={{ $now.format('dd-MM-yyyy/H:mm') }}"
+            },
+            {
+              "id": "b0fe1bcc-e79c-4a6b-b8b4-44222c8bf4e8",
+              "name": "fileName",
+              "type": "string",
+              "value": "={{ $('Retrieve workflows').item.json.name.replace(/\\s+/g, '-').toLowerCase() }}-{{ $('Retrieve workflows').item.json.tags[0].name }}.json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f4714c84-5b26-4f8d-b8fb-be6f3c36eaa2",
+      "name": "Commit date & file name",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        440,
+        180
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "### Retrieve and process workflows from n8n",
+        "height": 380,
+        "width": 460,
+        "color": 3
+      },
+      "id": "531d89ca-a52f-4b49-ad5c-9da8a95fe3a0",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Commit + edit/create files if needed",
+        "height": 380,
+        "width": 460,
+        "color": 4
+      },
+      "id": "3d74be26-0316-42a8-9baa-f70e3678bd11",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        420,
+        40
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Retrieve workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Json file": {
+      "main": [
+        [
+          {
+            "node": "To base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "To base64": {
+      "main": [
+        [
+          {
+            "node": "Commit date & file name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "List files from repo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve workflows": {
+      "main": [
+        [
+          {
+            "node": "Json file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if file exists": {
+      "main": [
+        [
+          {
+            "node": "Update file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List files from repo": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Commit date & file name": {
+      "main": [
+        [
+          {
+            "node": "Check if file exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f28a2fee-696f-4346-a3d5-a011f6f26a2c",
+  "triggerCount": 0,
+  "tags": []
+}
