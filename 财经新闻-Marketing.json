@@ -1,0 +1,274 @@
+{
+  "createdAt": "2025-06-06T08:54:00.228Z",
+  "updatedAt": "2025-06-09T09:22:14.000Z",
+  "id": "DrbWUd2WpOzW1NPA",
+  "name": "财经新闻",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "645d872b-b696-4f09-aa09-2e1207c5116e",
+      "name": "Daily Market Research Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -2520,
+        160
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "jsCode": "const keywords = ['财经', '金融', '投资', '理财', '经济', '股市', 'A股', '港股', '基金', '银行', '券商', '债券', 'IPO', '货币', '通胀', 'AI', '机器人', '科技'];\nconst results = [];\n\nfor (const item of items) {\n  const markdown = item.json.data?.markdown || '';\n\n  // 判断内容是否包含任一关键词\n  const isRelevant = keywords.some(keyword =>\n    markdown.toLowerCase().includes(keyword.toLowerCase())\n  );\n\n  if (isRelevant) {\n    // 提取第一个 markdown 链接作为标题和链接\n    const match = markdown.match(/\\[([^\\]]+)\\]\\((https?:\\/\\/[^\\)]+)\\)/);\n    const title = match ? match[1] : '';\n    const link = match ? match[2] : '';\n    const content = markdown;\n\n    const summary = \n      `AI Research Summary:\\n` +\n      `Title: ${title}\\n` +\n      `Link: ${link}\\n` +\n      `Content: ${content}`;\n\n    results.push({ json: { summary } });\n  }\n}\n\nreturn results;\n"
+      },
+      "id": "0b8f4b95-282f-42b8-bc01-900c4d9c7a78",
+      "name": "Filter Relevant Articles",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -2000,
+        160
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=你是一位资深总编辑，负责根据热点榜的多篇文章总结信息，生成一份精美的推荐报告。你需要完整保留并展示所有阅读提供的信息{{ $json.summary }}\n中的泛财经新闻。其他的不要。\n\n## 技能\n### 技能 1: 翻译为准确的中文，注意，有些技术词汇如果大家都用英文可以不翻译为中文。\n### 技能 2: 编辑与排版\n1. 按照整体报告逻辑和视觉美观要求，对所有文章进行重新排序与分组。2. 每篇文章信息展示时，用清晰的小标题或编号区分，每个部分采用条目列表格式，保证文本美观、层次分明，便于快速浏览。\n### 技能 3: 深刻洞见与推荐\n1. 针对整个报告，提炼全局性的洞见或跨领域的思考，例如讨论不同文章间如何形成互补、互相印证的观点，或对当前热门趋势、挑战与机遇给出深刻评论。\n### 技能 4: 生成报告\n1. 文章长度不要超过2000字，在上下文编辑、排序和视觉搭配上做优化，增强报告整体吸引力和逻辑性。2. 输出一份整洁、结构分明、富有视觉吸引力的 HTML 格式报告。可使用 HTML 标签（如 <h1>、<h2>、<div>、<ul>、<li>、<p> 等）对内容进行排版，使报告阅读起来美观易读。3. 在报告开头加入整体总结和导读，对本周文章做出总体评价，并提出关键洞见或建议，让这份报告不仅是内容集合，更像专属周报或私人阅读秘书推荐。4. 保证每篇文章内容都以独立模块呈现（例如每篇文章一个 <div> 块并配以合适标题）。5. 确保包含每个新闻的url,\n\n请严格按照以上要求，先改写内容，再生成网页代码，并保证最终页面美观、专业、易读。\n",
+        "options": {}
+      },
+      "id": "f210d30f-180d-4c4f-b2b6-81c893e855f0",
+      "name": "Summarizer Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -1740,
+        160
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "content": "🌐💻 2. Crawling & Filtering\nNodes:\n🌐 Crawl TechCrunch (FireCrawl) (HTTP Request)\n\n🧠 Filter Relevant Articles (Code)\n\n🔍 What these nodes do:\n🌐 Crawl TechCrunch (FireCrawl)\nUses a POST request to FireCrawl’s API\n\nInputs:\n\nurl: Target site (e.g., https://techcrunch.com)\n\ncrawl_type: \"scrape\"\n\nextract_article: true\n\nRetrieves:\n\ntitle, content, author, published_at\n\n🧠 Filter Relevant Articles\nUses a Code node to check if the article is relevant\n\nKeywords like \"AI\", \"machine learning\", \"startup\" are matched\n\nFilters only the articles that matter to your domain",
+        "height": 800,
+        "width": 440,
+        "color": 3
+      },
+      "id": "098ab77e-ded5-413f-8285-5f48f2c82f94",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2280,
+        -420
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "🤖💬 3. Summarization & Delivery\nNodes:\n🧠 Summarize Article with AI (AI Agent)\n\n🔗 OpenAI Chat (Summarizer) (OpenAI Chat Model)\n\n💬 Send Summary to Slack (Slack)\n\n📌 What happens here:\n🤖 Summarize Article with AI\nPasses the article to a GPT-4 or GPT-3.5 agent\n\nUses a prompt like:\n\n“Summarize the following article in 3 bullet points…”\n\n💡 OpenAI Chat (Summarizer)\nExecutes the actual summarization\n\nOutputs a short, clean summary ideal for fast reading\n\n💬 Send Summary to Slack\nPosts the summary to a specific Slack channel (e.g., #market-research)",
+        "height": 920,
+        "width": 640,
+        "color": 5
+      },
+      "id": "7ea9ac81-0e3a-4097-8774-cdc91891bf5e",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1780,
+        -380
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "=======================================\n            WORKFLOW ASSISTANCE\n=======================================\nFor any questions or support, please contact:\n    Yaron@nofluff.online\n\nExplore more tips and tutorials here:\n   - YouTube: https://www.youtube.com/@YaronBeen/videos\n   - LinkedIn: https://www.linkedin.com/in/yaronbeen/\n=======================================\n",
+        "height": 320,
+        "width": 1300,
+        "color": 4
+      },
+      "id": "696b4b2b-f0ce-4d9b-8cb0-e2cac64d3179",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -4460,
+        -400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "这种尖端的 n8n 自动化是一种复杂的市场研究和情报收集工具，旨在将 Web 内容发现转化为可作的见解。通过智能地结合网络爬虫、AI 驱动的过滤和智能摘要，此工作流程：\n\nDiscovers Relevant Content:\n发现相关内容 ：\n\nAutomatically crawls target websites\n自动抓取目标网站\nIdentifies trending topics\n确定热门话题\nExtracts comprehensive article details\n提取全面的文章详细信息\nIntelligent Content Filtering:\n智能内容过滤 ：\n\nApplies custom keyword matching\n应用自定义关键字匹配\nFilters for most relevant articles\n最相关文章的过滤器\nEnsures high-quality information capture\n确保高质量的信息捕获\nAI-Powered Summarization:\nAI 驱动的摘要 ：\n\nGenerates concise, meaningful summaries\n生成简洁、有意义的摘要\nExtracts key insights  提取关键见解\nProvides quick, digestible information\n提供快速、易于理解的信息\nSeamless Delivery:\n无缝交付 ：\n\nSends summaries directly to Slack\n将摘要直接发送到 Slack\nEnables instant team communication\n实现即时团队通信\nFacilitates rapid information sharing\n促进快速信息共享\nKey Benefits  主要优点\n🤖 Full Automation: Continuous market intelligence\n🤖 完全自动化 ：持续的市场情报\n💡 Smart Filtering: Precision content discovery\n💡 智能过滤 ：精确内容发现\n📊 AI-Powered Insights: Intelligent summarization\n📊 AI 驱动的洞察 ：智能摘要\n🚀 Instant Delivery: Real-time team updates\n🚀 即时交付 ：实时团队更新\nWorkflow Architecture  工作流架构\n🔹 Stage 1: Content Discovery\n🔹 第 1 阶段：内容发现\nScheduled Trigger: Daily market research\nScheduled Trigger： 每日市场调研\nFireCrawl Integration: Web content crawling\nFireCrawl 集成 ：Web 内容爬网\nComprehensive Site Scanning:\n全面的站点扫描 ：\nExtracts article metadata\n提取文章元数据\nCaptures full article content\n捕获完整的文章内容\nIdentifies key information sources\n确定关键信息源\n🔹 Stage 2: Intelligent Filtering\n🔹 第 2 阶段：智能筛选\nKeyword-Based Matching  基于关键字的匹配\nRelevance Assessment  相关性评估\nCustom Domain Optimization:\n自定义域优化 ：\nAI and technology focus\nAI 和技术重点\nStartup and innovation tracking\n创业和创新跟踪\n🔹 Stage 3: AI Summarization\n🔹 第 3 阶段：AI 摘要\nOpenAI GPT Integration  OpenAI GPT 集成\nContextual Understanding  情境理解\nConcise Insight Generation:\n简洁的洞察生成 ：\n3-point summary format  3 点摘要格式\nCaptures essential information\n捕获重要信息\n🔹 Stage 4: Team Notification\n🔹 第 4 阶段：团队通知\nSlack Integration  Slack 集成\nInstant Information Sharing\n即时信息共享\nFormatted Insight Delivery\n格式化的 Insight Delivery\nPotential Use Cases  可能的用例\nMarket Research Teams: Trend tracking\n市场研究团队 ：趋势跟踪\nInnovation Departments: Technology monitoring\n创新部门 ：技术监控\nStartup Ecosystems: Competitive intelligence\n创业生态系统 ：竞争情报\nProduct Management: Industry insights\n产品管理 ：行业洞察\nStrategic Planning: Rapid information gathering\n战略规划 ：快速收集信息\nSetup Requirements  设置要求\nFireCrawl API\n\nWeb crawling credentials\nWeb 爬网凭据\nConfigured crawling parameters\n配置的爬网参数\nOpenAI API\n\nGPT model access  GPT 模型访问\nSummarization configuration\n摘要配置\nAPI key management  API 密钥管理\nSlack Workspace  Slack 工作区\n\nChannel for insights delivery\n洞察交付渠道\nAppropriate app permissions\n适当的应用程序权限\nWebhook configuration  Webhook 配置\nn8n Installation  n8n 安装\n\nCloud or self-hosted instance\n云或自托管实例\nWorkflow configuration  工作流配置\nAPI credential management\nAPI 凭证管理\nFuture Enhancement Suggestions\n未来的增强建议\n🤖 Multi-source crawling\n🤖 多源爬取\n📊 Advanced sentiment analysis\n📊 高级情绪分析\n🔔 Customizable alert mechanisms\n🔔 可定制的警报机制\n🌐 Expanded topic tracking\n🌐 扩展的主题跟踪\n🧠 Machine learning refinement\n🧠 机器学习优化Absolutely! Here's your **Market Research Automation Workflow** beautifully divided into logical sections, with clear explanations and fitting icons to help you grasp each part at a glance.\n\n---\n\n# 🚀 **n8n Market Research Automation Workflow**\n\nAutomate the process of **crawling news sites**, **filtering for relevant content**, **summarizing it with AI**, and **posting it to Slack** — all in a seamless flow.\n\n---\n\n## ⏰ 1. **Trigger & Scheduling**\n\n**Node:** `🕒 Daily Market Research Trigger`\n\n> Starts the workflow on a recurring schedule.\n\n🔧 **What it does:**\n\n* Runs every morning (or your defined time)\n* Ensures your team receives fresh updates daily\n\n📅 **Example Cron Setting:**\n\n* Every day at 8:00 AM\n\n---\n\n## 🌐💻 2. **Crawling & Filtering**\n\n### **Nodes:**\n\n* `🌐 Crawl TechCrunch (FireCrawl)` *(HTTP Request)*\n* `🧠 Filter Relevant Articles` *(Code)*\n\n### 🔍 What these nodes do:\n\n#### 🌐 **Crawl TechCrunch (FireCrawl)**\n\n* Uses a **POST** request to FireCrawl’s API\n* Inputs:\n\n  * `url`: Target site (e.g., `https://techcrunch.com`)\n  * `crawl_type`: `\"scrape\"`\n  * `extract_article`: `true`\n* Retrieves:\n\n  * `title`, `content`, `author`, `published_at`\n\n#### 🧠 **Filter Relevant Articles**\n\n* Uses a `Code` node to check if the article is relevant\n* Keywords like `\"AI\"`, `\"machine learning\"`, `\"startup\"` are matched\n* Filters only the articles that **matter to your domain**\n\n📄 **Sample Code:**\n\n```javascript\nconst keywords = ['AI', 'machine learning', 'startup', 'generative'];\nconst results = [];\n\nfor (const item of items) {\n  const title = item.json.article?.title?.toLowerCase() || '';\n  const content = item.json.article?.content?.toLowerCase() || '';\n\n  const isRelevant = keywords.some(keyword =>\n    title.includes(keyword.toLowerCase()) ||\n    content.includes(keyword.toLowerCase())\n  );\n\n  if (isRelevant) {\n    results.push(item); // keep only relevant articles\n  }\n}\n\nreturn results;\n```\n\n---\n\n## 🤖💬 3. **Summarization & Delivery**\n\n### **Nodes:**\n\n* `🧠 Summarize Article with AI` *(AI Agent)*\n* `🔗 OpenAI Chat (Summarizer)` *(OpenAI Chat Model)*\n* `💬 Send Summary to Slack` *(Slack)*\n\n### 📌 What happens here:\n\n#### 🤖 **Summarize Article with AI**\n\n* Passes the article to a GPT-4 or GPT-3.5 agent\n* Uses a prompt like:\n\n  > “Summarize the following article in 3 bullet points…”\n\n#### 💡 **OpenAI Chat (Summarizer)**\n\n* Executes the actual summarization\n* Outputs a short, clean summary ideal for fast reading\n\n#### 💬 **Send Summary to Slack**\n\n* Posts the summary to a specific Slack channel (e.g., `#market-research`)\n* Message format example:\n\n  ```\n  🔍 *Market Research Summary*\n  *Title:* OpenAI launches GPT-5\n  *Link:* https://techcrunch.com/article\n  *Summary:*\n  - GPT-5 improves reasoning\n  - Enhanced safety mechanisms\n  - Better multilingual performance\n  ```\n\n",
+        "height": 2758,
+        "width": 1289,
+        "color": 4
+      },
+      "id": "c587c621-cd5c-421c-a180-7ca6d5c8ca2e",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -4460,
+        -60
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-r1-0528:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -1680,
+        400
+      ],
+      "id": "37c23902-a29d-4d8d-8803-21e9c0f19893",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "r7KVJUV9mVgdFFSu",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "zw7000727@gmail.com",
+        "subject": "AI搜索",
+        "message": "= {{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1320,
+        200
+      ],
+      "id": "8fc5919b-81fb-44d0-9f45-dda63c11a98c",
+      "name": "Gmail",
+      "webhookId": "ccdcf9f5-32ba-48c7-89df-0badfe88817a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BmcAAKceln6nG6on",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Default",
+        "operation": "Scrape A Url And Get Its Content",
+        "url": "https://top.miyucaicai.cn/",
+        "formats": [
+          "markdown"
+        ],
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-firecrawl.fireCrawl",
+      "typeVersion": 1,
+      "position": [
+        -2220,
+        220
+      ],
+      "id": "acfc7d0a-545f-449b-a1a6-46dded582e99",
+      "name": "FireCrawl",
+      "credentials": {
+        "fireCrawlApi": {
+          "id": "fGe2H8XdtvX6kBGm",
+          "name": "FireCrawl account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Summarizer Agent": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Relevant Articles": {
+      "main": [
+        [
+          {
+            "node": "Summarizer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Market Research Trigger": {
+      "main": [
+        [
+          {
+            "node": "FireCrawl",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarizer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FireCrawl": {
+      "main": [
+        [
+          {
+            "node": "Filter Relevant Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Daily Market Research Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "1f91a2be-650a-40cd-979c-89b47a46e701",
+  "triggerCount": 1,
+  "tags": [
+    {
+      "createdAt": "2025-06-09T07:13:31.392Z",
+      "updatedAt": "2025-06-09T07:13:31.392Z",
+      "id": "FBOwAyyJROImjTW7",
+      "name": "Marketing"
+    },
+    {
+      "createdAt": "2025-06-09T07:13:31.398Z",
+      "updatedAt": "2025-06-09T07:13:31.398Z",
+      "id": "XvpGF2N68EJ6BLus",
+      "name": "AI"
+    }
+  ]
+}
