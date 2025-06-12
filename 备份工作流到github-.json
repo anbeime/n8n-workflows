@@ -1,9 +1,9 @@
 {
   "createdAt": "2025-06-10T11:16:13.772Z",
-  "updatedAt": "2025-06-10T13:57:06.000Z",
+  "updatedAt": "2025-06-11T15:48:25.000Z",
   "id": "tWTqDMf6DmafOyLF",
   "name": "备份工作流到GITHUB",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -399,12 +399,16 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "f28a2fee-696f-4346-a3d5-a011f6f26a2c",
-  "triggerCount": 0,
+  "versionId": "4dc34d31-741e-4c1a-a9b5-ffba4e1bddc8",
+  "triggerCount": 1,
   "tags": []
 }
