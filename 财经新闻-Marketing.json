@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-06-06T08:54:00.228Z",
-  "updatedAt": "2025-06-09T09:22:14.000Z",
+  "updatedAt": "2025-06-12T03:46:22.000Z",
   "id": "DrbWUd2WpOzW1NPA",
   "name": "财经新闻",
   "active": true,
@@ -48,8 +48,8 @@
       "name": "Summarizer Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        -1740,
-        160
+        -1760,
+        180
       ],
       "typeVersion": 1.9
     },
@@ -184,6 +184,52 @@
           "name": "FireCrawl account"
         }
       }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "message:send",
+        "receive_id": "ou_67f544bdabb0d646f155f3a6abcf079f",
+        "content": "= {{ $json.output }}"
+      },
+      "type": "n8n-nodes-feishu-lite.feishuNode",
+      "typeVersion": 1,
+      "position": [
+        -1000,
+        400
+      ],
+      "id": "dc22bcaa-04da-49e8-a662-d5b0264a6a00",
+      "name": "Feishu Node",
+      "credentials": {
+        "feishuCredentialsApi": {
+          "id": "OIcE7C8yyfXLPmQ2",
+          "name": "Feishu Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "13632833907@qq.com",
+        "toEmail": "13632833907@qq.com",
+        "subject": "AI资讯",
+        "html": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1300,
+        460
+      ],
+      "id": "6d244641-718d-4ca0-a109-91a85fb769df",
+      "name": "Send Email",
+      "webhookId": "a08d07e2-21d6-48df-8051-b133256d9965",
+      "credentials": {
+        "smtp": {
+          "id": "BUD9P9cPM6NcNdaU",
+          "name": "SMTP account"
+        }
+      }
     }
   ],
   "connections": {
@@ -192,6 +238,11 @@
         [
           {
             "node": "Gmail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Feishu Node",
             "type": "main",
             "index": 0
           }
@@ -255,7 +306,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "1f91a2be-650a-40cd-979c-89b47a46e701",
+  "versionId": "69cfe81e-7106-4bc9-a8af-08968c14433c",
   "triggerCount": 1,
   "tags": [
     {
