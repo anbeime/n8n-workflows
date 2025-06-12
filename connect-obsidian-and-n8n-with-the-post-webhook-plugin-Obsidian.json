@@ -1,0 +1,364 @@
+{
+  "createdAt": "2025-06-12T04:45:56.230Z",
+  "updatedAt": "2025-06-12T06:11:50.000Z",
+  "id": "xKVsufrlouFq1PhT",
+  "name": "Connect Obsidian and n8n with the Post Webhook Plugin",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.attachments",
+        "options": {}
+      },
+      "id": "bafae654-db79-4250-9818-f0da1f33d887",
+      "name": "Separate attachment data",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "581d15b1-3797-4490-b391-427010301ba4",
+      "name": "Process Each Attachment",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        0,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data",
+        "options": {
+          "fileName": "={{ $json.name }}"
+        }
+      },
+      "id": "a6ec89d3-3762-4b50-bd29-84e66b4cc940",
+      "name": "Convert Attachment to File",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assignment1",
+              "name": "data",
+              "value": "={{ $json.data.replace(/^data:.*?,/, '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "3c9d5449-08a5-4c57-8456-98845b1cdbf6",
+      "name": "Fix Base64 string",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "clippings-sheet"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "c4bbfcae-190a-44d4-aa94-f31d067670bd",
+      "name": "Append Row to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        980,
+        180
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4so4NY10K0x09wrb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field1",
+              "name": "Filename",
+              "value": "={{ $('Webhook').item.json.body.filename }}",
+              "type": "string"
+            },
+            {
+              "id": "field2",
+              "name": "Category",
+              "value": "={{ $('Webhook').item.json.body.category }}",
+              "type": "string"
+            },
+            {
+              "id": "field3",
+              "name": "Author",
+              "value": "={{ $('Webhook').item.json.body.author }}",
+              "type": "string"
+            },
+            {
+              "id": "field4",
+              "name": "Published",
+              "value": "={{ $('Webhook').item.json.body.published }}",
+              "type": "string"
+            },
+            {
+              "id": "field5",
+              "name": "Description",
+              "value": "={{ $('Webhook').item.json.body.description }}",
+              "type": "string"
+            },
+            {
+              "id": "field6",
+              "name": "Source",
+              "value": "={{ $('Webhook').item.json.body.source }}",
+              "type": "string"
+            },
+            {
+              "id": "field7",
+              "name": "Tags",
+              "value": "={{ $('Webhook').item.json.body.tags }}",
+              "type": "array"
+            },
+            {
+              "id": "field8",
+              "name": "Attachments",
+              "value": "={{ $json.webContentLink }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2313a455-5e75-4446-a6c1-2bfd0a5425c7",
+      "name": "Prepare Data for Sheet",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        760,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "webContentLink"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ef60033f-0cd9-4b22-9dbc-34843973ae21",
+      "name": "Aggregate Links to Attachments",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        540,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.name }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "YOUR_FOLDER_ID",
+          "mode": "list",
+          "cachedResultName": "clippings-attachments"
+        },
+        "options": {}
+      },
+      "id": "81018c18-061f-4c65-af0f-30cc4467ad83",
+      "name": "Upload Attachments to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        300,
+        180
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZm3Ut95ASdr3vpx",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "YOUR_WEBHOOK_PATH",
+        "options": {}
+      },
+      "id": "7f8735b1-db24-4aac-8c83-e3e594473a86",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        120
+      ],
+      "webhookId": "cd8a0e83-1295-450f-817d-8afb4fa3a792"
+    }
+  ],
+  "connections": {
+    "Separate attachment data": {
+      "main": [
+        [
+          {
+            "node": "Fix Base64 string",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Each Attachment": {
+      "main": [
+        [
+          {
+            "node": "Upload Attachments to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert Attachment to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Attachment to File": {
+      "main": [
+        [
+          {
+            "node": "Process Each Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fix Base64 string": {
+      "main": [
+        [
+          {
+            "node": "Process Each Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Data for Sheet": {
+      "main": [
+        [
+          {
+            "node": "Append Row to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Links to Attachments": {
+      "main": [
+        [
+          {
+            "node": "Prepare Data for Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Attachments to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Links to Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Separate attachment data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a9210d31-886a-448c-bfcd-53e0eac3fef8",
+  "triggerCount": 0,
+  "tags": [
+    {
+      "createdAt": "2025-06-12T04:40:58.784Z",
+      "updatedAt": "2025-06-12T04:40:58.784Z",
+      "id": "QdmeQHEDDl5dkk7v",
+      "name": "Obsidian"
+    }
+  ]
+}
