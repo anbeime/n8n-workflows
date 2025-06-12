@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-06-06T09:46:57.460Z",
-  "updatedAt": "2025-06-10T16:40:59.000Z",
+  "updatedAt": "2025-06-11T16:03:16.000Z",
   "id": "d1ZksqyzK4tBsfZw",
   "name": "自动工作流程和凭据备份到 GitHub，带有变化检测功能",
   "active": false,
@@ -591,11 +591,6 @@
             "node": "Set Workflow Path",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Set Credential Path",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -763,7 +758,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "ff608daf-ec32-49b6-806a-119df5bf7359",
+  "versionId": "7d61b977-eb26-44f9-a291-09cbbeb4616d",
   "triggerCount": 0,
   "tags": []
 }
