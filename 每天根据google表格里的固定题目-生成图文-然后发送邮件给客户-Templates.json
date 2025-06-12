@@ -1,0 +1,476 @@
+{
+  "createdAt": "2025-06-10T12:07:04.835Z",
+  "updatedAt": "2025-06-12T11:14:46.000Z",
+  "id": "QOTu0x7vsEAfN2gi",
+  "name": "每天根据Google表格里的固定题目 生成图文 然后发送邮件给客户",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -840,
+        220
+      ],
+      "id": "21f97759-afd8-4968-b82d-65389f73a43c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## 例子3：每天根据Google表格里的固定题目 生成图文 然后发送邮件给客户",
+        "height": 660,
+        "width": 2640
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        20
+      ],
+      "id": "1fe727d5-e5c4-4027-ab37-0a0999e3165e",
+      "name": "Sticky Note19"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1e9cYLVq70PbTlgw1IPej7CCavOVHSpWYVSfWZAmwpLc",
+          "mode": "list",
+          "cachedResultName": "Newsletter Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e9cYLVq70PbTlgw1IPej7CCavOVHSpWYVSfWZAmwpLc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e9cYLVq70PbTlgw1IPej7CCavOVHSpWYVSfWZAmwpLc/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Published?",
+              "lookupValue": "NO"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -620,
+        220
+      ],
+      "id": "3bf62781-52fc-4a86-b8a1-4eb4d5100743",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4so4NY10K0x09wrb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        220
+      ],
+      "id": "0a915669-040f-4fb9-8c0a-a4241e450b4d",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1e9cYLVq70PbTlgw1IPej7CCavOVHSpWYVSfWZAmwpLc",
+          "mode": "list",
+          "cachedResultName": "Newsletter Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e9cYLVq70PbTlgw1IPej7CCavOVHSpWYVSfWZAmwpLc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e9cYLVq70PbTlgw1IPej7CCavOVHSpWYVSfWZAmwpLc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Newsletter Topics": "={{ $json['Newsletter Topics'] }}",
+            "Published?": "YES",
+            "Published at": "={{ $('Schedule Trigger').item.json['Readable date'] }}"
+          },
+          "matchingColumns": [
+            "Newsletter Topics"
+          ],
+          "schema": [
+            {
+              "id": "Newsletter Topics",
+              "displayName": "Newsletter Topics",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Published?",
+              "displayName": "Published?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Published at",
+              "displayName": "Published at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -180,
+        220
+      ],
+      "id": "a08353f0-fe5b-4712-a99c-0d721a49c448",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4so4NY10K0x09wrb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=1. 帮我以这个{{ $json['Newsletter Topics'] }}为主题一个文章，要求英文。\n2. 帮我以这个{{ $json['Newsletter Topics'] }}写AI图片生成的提示词，要求英文，目标是制作一个带有图标和数据的图片。",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        60,
+        220
+      ],
+      "id": "a37edd2b-28ea-4216-891a-49e31e60676a",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"文章\": \"\",\n\t\"图片提示词\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        420
+      ],
+      "id": "2ba672e9-fca9-444d-83e5-9ef208d086b0",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://modelscope.cn/mcp/servers/comeonzhj/jimengpic-mcp/tools/generate-image/invoke",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3Zjc2NTU1OS00MjBiLTQzZDgtYmFiYi1hYzU0YzExOWZmYzYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzQyOTIwMDIwfQ.oxwLZYayWGA9XIACXT9LlXFjcwR5TjJb5nrPvcmCkeU]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"text\": \"{{ $json.output['图片提示词'] }}\",\n    \"illustration\": \"fireworks, lanterns, clouds\",  // 可根据实际内容调整\n    \"color\": \"red\",                                 // 可根据业务需求动态传递\n    \"ratio\": \"1:1\" \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        220
+      ],
+      "id": "39073a6a-b4ed-4650-88b0-f8ea7e06fe57",
+      "name": "GPT IMAGE GEN"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        220
+      ],
+      "id": "a63a7995-2bfd-459d-845a-6f09f3f5344c",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "sendTo": "=",
+        "subject": "={{ $('Limit').item.json['Newsletter Topics'] }}",
+        "message": "=<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title></title>\n    <style>\n        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');\n        \n        body {\n            font-family: 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;\n            line-height: 1.8;\n            color: #333;\n            max-width: 700px;\n            margin: 0 auto;\n            padding: 25px;\n            background-color: #f5f7fa;\n        }\n        \n        .email-container {\n            background-color: #ffffff;\n            border-radius: 12px;\n            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);\n            overflow: hidden;\n        }\n        \n        .top-accent {\n            height: 6px;\n            background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c);\n        }\n        \n        .header {\n            padding: 35px 40px 25px;\n            text-align: center;\n            background-color: #fcfcfc;\n            position: relative;\n        }\n        \n        .header::after {\n            content: \"\";\n            position: absolute;\n            bottom: 0;\n            left: 15%;\n            right: 15%;\n            height: 1px;\n            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);\n        }\n        \n        .brand-name {\n            font-size: 24px;\n            font-weight: 700;\n            color: #3498db;\n            letter-spacing: 1px;\n            margin-bottom: 15px;\n            text-transform: uppercase;\n        }\n        \n        h1 {\n            color: #2c3e50;\n            font-weight: 600;\n            margin-top: 0;\n            margin-bottom: 10px;\n            font-size: 28px;\n            letter-spacing: -0.5px;\n        }\n        \n        .date {\n            display: inline-block;\n            color: #7f8c8d;\n            font-size: 14px;\n            margin: 0;\n            padding: 5px 15px;\n            border-radius: 20px;\n            background-color: #f8f9fa;\n        }\n        \n        .content {\n            padding: 40px;\n            font-size: 16px;\n            color: #3a4a5a;\n        }\n        \n        .content p {\n            margin-bottom: 20px;\n            line-height: 1.8;\n        }\n        \n        .content p:first-of-type::first-letter {\n            font-size: 300%;\n            font-weight: 700;\n            float: left;\n            padding: 0 8px 0 0;\n            color: #3498db;\n            line-height: 0.8;\n        }\n        \n        .content h2 {\n            color: #2c3e50;\n            font-size: 22px;\n            margin-top: 35px;\n            margin-bottom: 15px;\n            padding-bottom: 8px;\n            border-bottom: 2px solid #f0f4f8;\n        }\n        \n        .content a {\n            color: #3498db;\n            text-decoration: none;\n            border-bottom: 1px dotted #3498db;\n            transition: all 0.2s ease;\n        }\n        \n        .content a:hover {\n            color: #2980b9;\n            border-bottom-color: #2980b9;\n        }\n        \n        .quote {\n            border-left: 4px solid #3498db;\n            padding: 15px 20px;\n            margin: 25px 0;\n            background-color: #f8f9fa;\n            font-style: italic;\n            color: #34495e;\n        }\n        \n        .footer {\n            background-color: #f8fafc;\n            padding: 30px 40px;\n            text-align: center;\n            font-size: 14px;\n            color: #95a5a6;\n            border-top: 1px solid #eef2f7;\n        }\n        \n        .social-links {\n            margin: 25px 0;\n        }\n        \n        .social-button {\n            display: inline-block;\n            width: 36px;\n            height: 36px;\n            background-color: #f1f5f9;\n            border-radius: 50%;\n            color: #3498db;\n            line-height: 36px;\n            text-align: center;\n            margin: 0 8px;\n            text-decoration: none;\n            font-weight: bold;\n            box-shadow: 0 2px 5px rgba(0,0,0,0.05);\n            transition: transform 0.3s ease, background-color 0.3s ease;\n        }\n        \n        .social-button:hover {\n            transform: translateY(-3px);\n            background-color: #e6f0f9;\n        }\n        \n        .button {\n            display: inline-block;\n            background: linear-gradient(135deg, #3498db, #2980b9);\n            color: white;\n            text-decoration: none;\n            padding: 12px 28px;\n            border-radius: 6px;\n            margin-top: 25px;\n            font-weight: 500;\n            letter-spacing: 0.5px;\n            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);\n            transition: all 0.3s ease;\n        }\n        \n        .button:hover {\n            transform: translateY(-2px);\n            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);\n            background: linear-gradient(135deg, #3498db, #1c6ea4);\n        }\n        \n        .divider {\n            height: 1px;\n            margin: 20px 0;\n            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);\n        }\n        \n        .company-signature {\n            font-weight: 600;\n            color: #3498db;\n            letter-spacing: 1px;\n            margin: 20px 0 10px;\n        }\n        \n        @media only screen and (max-width: 600px) {\n            body {\n                padding: 15px;\n            }\n            .header, .content, .footer {\n                padding: 25px 20px;\n            }\n            h1 {\n                font-size: 24px;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"email-container\">\n        <div class=\"top-accent\"></div>\n        <div class=\"header\">\n            <div class=\"brand-name\">每日热点</div>\n            <h1></h1>\n            <p class=\"date\">{{ new Date().toLocaleDateString('zh-CN', {year: 'numeric', month: 'long', day: 'numeric'}) }}</p>\n        </div>\n        \n        <div class=\"content\">\n            {{ $('AI Agent1').item.json.output['文章'] }}\n            \n            <div class=\"quote\">\n                阅读是一座随身携带的避难所，一盏点亮思想的明灯。\n            </div>\n            \n            <a href=\"#\" class=\"button\">阅读更多精彩内容</a>\n        </div>\n        \n        <div class=\"footer\">\n            <div class=\"social-links\">\n                <a href=\"#\" class=\"social-button\">微</a>\n                <a href=\"#\" class=\"social-button\">博</a>\n                <a href=\"#\" class=\"social-button\">知</a>\n                <a href=\"#\" class=\"social-button\">豆</a>\n            </div>\n            \n            <div class=\"divider\"></div>\n            \n            <div class=\"company-signature\">您的品牌名称</div>\n            <p>感谢您的阅读与支持！如果喜欢我们的内容，欢迎分享给更多朋友。</p>\n            <p>如需退订此类邮件，请<a href=\"#\" style=\"color:#95a5a6;text-decoration:underline;\">点击这里</a></p>\n            <p>© 2025 您的品牌. 保留所有权利.</p>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        220
+      ],
+      "id": "fe7046a7-2d0f-4ef4-bb63-fee5624bc74a",
+      "name": "Gmail2",
+      "webhookId": "17349807-4a3b-43ce-beaf-19acf60af343",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BmcAAKceln6nG6on",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 填入你的OpenAI Api key",
+        "height": 240,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        160
+      ],
+      "id": "ef4656af-5270-416f-b206-a113d3e69e16",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### 填入要发送的邮箱",
+        "height": 240,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        840,
+        160
+      ],
+      "id": "c9486200-e0bc-41dd-a290-6853b706ee33",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro-preview-06-05",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        460
+      ],
+      "id": "dacddf72-507f-4385-b5e6-581a94cbf6cd",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vQQJ0ZtAmsJJh3AG",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "GPT IMAGE GEN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT IMAGE GEN": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "AI Agent1": [
+      {
+        "json": {
+          "output": {
+            "文章": "### How to Use AI Agents for Acquiring Leads\n\nIn today’s competitive market, acquiring leads is crucial for business growth. AI agents can significantly enhance this process by automating tasks, analyzing data, and engaging potential customers. Here’s how you can effectively use AI agents for lead acquisition.\n\n#### 1. Understanding AI Agents\nAI agents are systems designed to perform tasks that usually require human intelligence. They can interact with users, learn from interactions, and perform data analysis.\n\n#### 2. Automating Initial Interactions\nOne of the primary ways to utilize AI agents is in automating initial interactions with potential leads. Chatbots, for example, can answer common questions, qualify leads, and gather information without the need for human intervention. This not only saves time but also ensures that potential customers receive immediate assistance.\n\n#### 3. Data Analysis\nAI agents can analyze vast amounts of data more quickly than a human can. By utilizing machine learning algorithms, they can identify patterns in customer behavior, preferences, and demographics, enabling businesses to tailor their marketing strategies effectively. This targeted approach can significantly increase lead conversion rates.\n\n#### 4. Personalization\nAI agents can help create personalized experiences for leads. By analyzing past interactions and preferences, AI can suggest products or services that are most relevant to a potential customer, improving engagement and increasing the likelihood of conversion.\n\n#### 5. Follow-up Automation\nFollowing up with leads is essential, and AI can help automate this process as well. AI agents can send personalized follow-up emails or messages to leads who have shown interest, providing them with more information and nudging them further down the sales funnel.\n\n#### 6. Integrating with CRM Systems\nIntegrating AI agents with Customer Relationship Management (CRM) systems allows businesses to consolidate information about leads, track interactions, and analyze engagement over time. This integration helps in building comprehensive lead profiles that can assist sales teams in their outreach efforts.\n\n#### Conclusion\nUsing AI agents for acquiring leads can transform the way businesses interact with potential customers. By automating processes, analyzing data, and providing personalized experiences, AI can help businesses not only acquire leads efficiently but also nurture them through the sales process. Adopting AI technology is no longer optional but a necessity for staying competitive in today’s market.",
+            "图片提示词": "An infographic illustrating the benefits of using AI agents for lead acquisition, featuring icons representing automation, data analysis, personalization, and follow-up. Include graphs showing increased lead conversions and customer engagement. Use a modern, professional design."
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "8ec8c52e-b971-4a6f-a900-d13b8aba22b8",
+  "triggerCount": 0,
+  "tags": [
+    {
+      "createdAt": "2025-06-12T10:13:33.292Z",
+      "updatedAt": "2025-06-12T10:13:33.292Z",
+      "id": "9sGecPSwn2y3HyT4",
+      "name": "Templates"
+    },
+    {
+      "createdAt": "2025-06-12T10:13:33.286Z",
+      "updatedAt": "2025-06-12T10:13:33.286Z",
+      "id": "DZy7qOOUg0DJEWUY",
+      "name": "Privat"
+    },
+    {
+      "createdAt": "2025-06-12T09:55:50.091Z",
+      "updatedAt": "2025-06-12T09:55:50.091Z",
+      "id": "f2fRGkFjptoF8OuF",
+      "name": "DeepSeek"
+    }
+  ]
+}
