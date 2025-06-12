@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-06-06T11:23:08.697Z",
-  "updatedAt": "2025-06-09T10:33:32.000Z",
+  "updatedAt": "2025-06-12T02:52:49.000Z",
   "id": "eysRgx5dPpkzKHuC",
   "name": "自动总结AI新闻并发送到邮箱",
   "active": true,
@@ -258,6 +258,30 @@
           "name": "Gmail account"
         }
       }
+    },
+    {
+      "parameters": {
+        "fromEmail": "13632833907@qq.com",
+        "toEmail": "13632833907@qq.com",
+        "subject": "AI资讯",
+        "html": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        540
+      ],
+      "id": "b500727c-54c0-402d-a095-15d8e0aeee25",
+      "name": "Send Email",
+      "webhookId": "a08d07e2-21d6-48df-8051-b133256d9965",
+      "credentials": {
+        "smtp": {
+          "id": "BUD9P9cPM6NcNdaU",
+          "name": "SMTP account"
+        }
+      }
     }
   ],
   "connections": {
@@ -339,6 +363,11 @@
             "node": "Gmail",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -367,7 +396,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "28a4571f-994f-4193-8222-677ee8aa2af5",
+  "versionId": "868ccfa0-9559-4602-a364-e4b102aa0669",
   "triggerCount": 1,
   "tags": [
     {
