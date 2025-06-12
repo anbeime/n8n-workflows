@@ -1,0 +1,359 @@
+{
+  "createdAt": "2025-06-12T12:57:09.097Z",
+  "updatedAt": "2025-06-12T12:57:09.097Z",
+  "id": "uGROOVVVD80BQGbE",
+  "name": "My workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "id": "fc48a6b7-d1a6-4278-9751-ee25cec628ee",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        520,
+        260
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "27957d4d-5f95-4f91-9a5a-11c441bd3470",
+      "name": "Manual Trigger (When Clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -120,
+        260
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1xoCVr_mlwn4jFcnJENtrU-_K5nkIytZ8qBXzxMq55n4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xoCVr_mlwn4jFcnJENtrU-_K5nkIytZ8qBXzxMq55n4/edit?usp=drivesdk",
+          "cachedResultName": "Youtube Videos Comments"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1592454760,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xoCVr_mlwn4jFcnJENtrU-_K5nkIytZ8qBXzxMq55n4/edit#gid=1592454760",
+          "cachedResultName": "Sheet3"
+        },
+        "options": {}
+      },
+      "id": "a9a66136-403f-4dde-a32d-f620a840bd9e",
+      "name": "Get Youtube Channel Ids from Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        100,
+        260
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4so4NY10K0x09wrb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "channelId",
+              "value": "={{ $json.channelId }}"
+            },
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "order",
+              "value": "date"
+            },
+            {
+              "name": "maxResults",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "pageToken",
+                    "value": "={{ $response.body.nextPageToken }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.nextPageToken}}"
+            }
+          }
+        }
+      },
+      "id": "e6f98ea7-2d4b-4932-b3e8-a94cca2750f9",
+      "name": "Get Youtube Video Urls form specific channel",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        340,
+        260
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "BeQdOtxaKhLq5CEE",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "21a7a279-8a86-494c-a32f-ebcf956e2f69",
+              "name": "Title",
+              "type": "string",
+              "value": "={{ $json.snippet.title }}"
+            },
+            {
+              "id": "0f7084f4-9180-4eee-ab59-8e0ce75b163f",
+              "name": "video_urls",
+              "type": "string",
+              "value": "=https://www.youtube.com/watch?v={{ $json.id.videoId }}"
+            },
+            {
+              "id": "40b96174-109e-4ddf-b1c2-c3f0b93a2769",
+              "name": "published_at",
+              "type": "string",
+              "value": "={{ $json.snippet.publishedAt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4e1d4b14-ba3a-4dff-900a-9afb702ac0aa",
+      "name": "Format fields as required to save in google sheet",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        700,
+        260
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1xoCVr_mlwn4jFcnJENtrU-_K5nkIytZ8qBXzxMq55n4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xoCVr_mlwn4jFcnJENtrU-_K5nkIytZ8qBXzxMq55n4/edit?usp=drivesdk",
+          "cachedResultName": "Youtube Videos Comments"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 760258523,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xoCVr_mlwn4jFcnJENtrU-_K5nkIytZ8qBXzxMq55n4/edit#gid=760258523",
+          "cachedResultName": "Sheet2"
+        },
+        "columns": {
+          "value": {
+            "Title": "={{ $json.Title }}",
+            "video_urls": "={{ $json.video_urls }}",
+            "published_at": "={{ $json.published_at }}"
+          },
+          "schema": [
+            {
+              "id": "Title",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Title",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_urls",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "video_urls",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_fetched_time",
+              "type": "string",
+              "display": true,
+              "removed": true,
+              "required": false,
+              "displayName": "last_fetched_time",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "next_fetch_time",
+              "type": "string",
+              "display": true,
+              "removed": true,
+              "required": false,
+              "displayName": "next_fetch_time",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "published_at",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "published_at",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "video_urls"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "742a49c0-67e1-42f7-8dd0-1e52f451fd61",
+      "name": "Insert & Update Youtube Urls in Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        900,
+        260
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4so4NY10K0x09wrb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Sync Youtube Video Urls with Google Sheets\n",
+        "height": 320,
+        "width": 1320
+      },
+      "id": "55e82898-a6b8-4a16-802e-6da3c6642340",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -200,
+        160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## I'm a note \n✅ Reads Channel IDs from `Sheet3`  \n📹 Fetches video URLs using YouTube API  \n📄 Writes video URLs to `Sheet2`  \n\n🔁 Output used in:  \n👉 [Part 2 – YouTube Comment Sentiment Analyzer](https://n8n.io/workflows/3855-youtube-comment-sentiment-analyzer-with-google-sheets-and-openai/)",
+        "height": 220,
+        "width": 280,
+        "color": 5
+      },
+      "id": "91391bb1-1ac4-472f-bb9b-d2fcca5a0cc1",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -500,
+        160
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Format fields as required to save in google sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Youtube Channel Ids from Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Get Youtube Video Urls form specific channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Youtube Video Urls form specific channel": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger (When Clicking 'Test workflow'": {
+      "main": [
+        [
+          {
+            "node": "Get Youtube Channel Ids from Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format fields as required to save in google sheet": {
+      "main": [
+        [
+          {
+            "node": "Insert & Update Youtube Urls in Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a21279b2-787e-4bdc-afa5-aa3db4ab9549",
+  "triggerCount": 0,
+  "tags": []
+}
