@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-06-10T12:07:04.835Z",
-  "updatedAt": "2025-06-12T11:14:46.000Z",
+  "updatedAt": "2025-06-12T13:56:15.000Z",
   "id": "QOTu0x7vsEAfN2gi",
   "name": "每天根据Google表格里的固定题目 生成图文 然后发送邮件给客户",
   "active": false,
@@ -69,8 +69,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        -620,
-        220
+        -540,
+        120
       ],
       "id": "3bf62781-52fc-4a86-b8a1-4eb4d5100743",
       "name": "Google Sheets1",
@@ -329,6 +329,31 @@
           "name": "Google Gemini(PaLM) Api account"
         }
       }
+    },
+    {
+      "parameters": {
+        "resource": "Default",
+        "operation": "Scrape A Url And Get Its Content",
+        "url": "https://top.miyucaicai.cn/",
+        "formats": [
+          "markdown"
+        ],
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-firecrawl.fireCrawl",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        100
+      ],
+      "id": "9906f231-6cb0-4fab-b0bd-9fb2febb82be",
+      "name": "FireCrawl",
+      "credentials": {
+        "fireCrawlApi": {
+          "id": "fGe2H8XdtvX6kBGm",
+          "name": "FireCrawl account"
+        }
+      }
     }
   ],
   "connections": {
@@ -336,7 +361,7 @@
       "main": [
         [
           {
-            "node": "Google Sheets1",
+            "node": "FireCrawl",
             "type": "main",
             "index": 0
           }
@@ -430,6 +455,17 @@
           }
         ]
       ]
+    },
+    "FireCrawl": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -451,7 +487,7 @@
       }
     ]
   },
-  "versionId": "8ec8c52e-b971-4a6f-a900-d13b8aba22b8",
+  "versionId": "dee96717-6df1-4d31-8fa1-4f5f31a880ed",
   "triggerCount": 0,
   "tags": [
     {
