@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-06-06T11:23:08.697Z",
-  "updatedAt": "2025-06-12T02:52:49.000Z",
+  "updatedAt": "2025-06-13T03:54:14.000Z",
   "id": "eysRgx5dPpkzKHuC",
   "name": "自动总结AI新闻并发送到邮箱",
   "active": true,
@@ -238,7 +238,7 @@
     },
     {
       "parameters": {
-        "sendTo": "zw7000727@gmail.com",
+        "sendTo": "13632833907@qq.com",
         "subject": "AI资讯",
         "message": "={{ $json.output }}",
         "options": {}
@@ -363,11 +363,6 @@
             "node": "Gmail",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Send Email",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -396,7 +391,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "868ccfa0-9559-4602-a364-e4b102aa0669",
+  "versionId": "befb5107-617e-430b-92c1-11c9df9e924e",
   "triggerCount": 1,
   "tags": [
     {
