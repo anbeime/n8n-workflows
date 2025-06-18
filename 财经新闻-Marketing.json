@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-06-06T08:54:00.228Z",
-  "updatedAt": "2025-06-13T03:37:55.000Z",
+  "updatedAt": "2025-06-17T16:00:41.000Z",
   "id": "DrbWUd2WpOzW1NPA",
   "name": "财经新闻",
   "active": true,
@@ -167,53 +167,7 @@
     },
     {
       "parameters": {
-        "resource": "message",
-        "operation": "message:send",
-        "receive_id": "ou_67f544bdabb0d646f155f3a6abcf079f",
-        "content": "= {{ $json.output }}"
-      },
-      "type": "n8n-nodes-feishu-lite.feishuNode",
-      "typeVersion": 1,
-      "position": [
-        160,
-        1800
-      ],
-      "id": "dc22bcaa-04da-49e8-a662-d5b0264a6a00",
-      "name": "Feishu Node",
-      "credentials": {
-        "feishuCredentialsApi": {
-          "id": "OIcE7C8yyfXLPmQ2",
-          "name": "Feishu Credentials account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "fromEmail": "13632833907@qq.com",
-        "toEmail": "13632833907@qq.com",
-        "subject": "AI资讯",
-        "html": "={{ $json.output }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
-      "position": [
-        -140,
-        1860
-      ],
-      "id": "6d244641-718d-4ca0-a109-91a85fb769df",
-      "name": "Send Email",
-      "webhookId": "a08d07e2-21d6-48df-8051-b133256d9965",
-      "credentials": {
-        "smtp": {
-          "id": "BUD9P9cPM6NcNdaU",
-          "name": "SMTP account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "modelName": "models/gemini-2.5-pro-preview-06-05",
+        "modelName": "models/gemini-2.5-pro-exp-03-25",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -301,7 +255,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "73518d96-5b37-4d51-9f11-a07b5c87472f",
+  "versionId": "78dd91f7-3f41-4023-854d-aa4af2bdf0e6",
   "triggerCount": 1,
   "tags": [
     {
