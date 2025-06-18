@@ -1,0 +1,181 @@
+{
+  "createdAt": "2025-06-17T09:12:20.748Z",
+  "updatedAt": "2025-06-17T15:59:51.000Z",
+  "id": "ipofyJEHbYPkUkJr",
+  "name": "My workflow 3",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 21,
+              "triggerAtMinute": "={{Math.floor(Math.random() * 60)}}\n"
+            }
+          ]
+        }
+      },
+      "id": "5a1119f2-6d70-4f18-8a94-92f66c7464a2",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4cfbc312-5dcd-444d-ae08-0bab417c084c",
+              "name": "searchInput",
+              "type": "string",
+              "value": "What's the latest news in artificial intelligence?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2f9caf6c-4439-42a3-a7d8-2087041ca124",
+      "name": "searchQuery",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        220,
+        0
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.perplexityAPI }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a social media assistant summarizing tech news for Twitter/X. Only return one article. Your output must follow this exact format: a short, engaging headline (max 140 characters), followed by a single space, then the direct article link. Do not use markdown, hashtags, emojis, or line breaks. Keep the total output under 200 characters. Be precise, objective, and newsworthy.Example: Mastercard launches Agent Pay, allowing AI agents to make purchases for users. https://www.perplexity.ai/page/mastercard-unveils-agent-pay-e-qWXnaUEzQZWCqsxF4l43zA\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('searchQuery').item.json.searchInput }}\"\n    }\n  ],\n  \"temperature\": 0.3,\n  \"top_p\": 0.9,\n  \"return_citations\": true,\n  \"search_domain_filter\": [\n    \"perplexity.ai\"\n  ],\n  \"search_recency_filter\": \"day\",\n  \"return_images\": true,\n  \"return_related_questions\": false,\n  \"max_tokens\": 80,\n  \"stream\": false,\n  \"presence_penalty\": 0,\n  \"frequency_penalty\": 1\n}\n",
+        "options": {}
+      },
+      "id": "4fdd2975-3b18-47c2-8d86-818fcec7d634",
+      "name": "Perplexity",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        660,
+        0
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f9bd3a0-5587-410f-b145-a287f65f9576",
+              "name": "perplexityAPI",
+              "type": "string",
+              "value": "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"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e099317f-6114-4164-b3ca-7e45a179a1e1",
+      "name": "set API key",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        440,
+        0
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.choices[0].message.content }}",
+        "additionalFields": {}
+      },
+      "id": "c95a4f41-62ff-49f6-a6c2-57902444d177",
+      "name": "Post to X",
+      "type": "n8n-nodes-base.twitter",
+      "position": [
+        880,
+        0
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "YD8opH5Qe78P8RAD",
+          "name": "X account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Perplexity": {
+      "main": [
+        [
+          {
+            "node": "Post to X",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "searchQuery": {
+      "main": [
+        [
+          {
+            "node": "set API key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set API key": {
+      "main": [
+        [
+          {
+            "node": "Perplexity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "searchQuery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "18b91cdb-9628-4b87-8297-3a52b595bcfc",
+  "triggerCount": 0,
+  "tags": []
+}
