@@ -1,9 +1,9 @@
 {
   "createdAt": "2025-06-06T08:54:00.228Z",
-  "updatedAt": "2025-06-17T16:00:41.000Z",
+  "updatedAt": "2025-07-05T15:52:03.000Z",
   "id": "DrbWUd2WpOzW1NPA",
   "name": "财经新闻",
-  "active": true,
+  "active": false,
   "isArchived": false,
   "nodes": [
     {
